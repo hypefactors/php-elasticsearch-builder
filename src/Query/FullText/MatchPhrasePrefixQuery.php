@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\FullText;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Query\Query;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html
@@ -111,7 +111,7 @@ class MatchPhrasePrefixQuery extends Query
 
         $validStatuses = ['none', 'all'];
 
-        if (! in_array($statusLower, $validStatuses)) {
+        if (! in_array($statusLower, $validStatuses, true)) {
             throw new InvalidArgumentException("The [{$status}] zero terms query status is invalid!");
         }
 

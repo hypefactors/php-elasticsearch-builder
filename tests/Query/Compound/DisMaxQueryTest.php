@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\Compound;
 
-use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use Hypefactors\ElasticBuilder\Query\Compound\DisMaxQuery;
+use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
+use PHPUnit\Framework\TestCase;
 
 class DisMaxQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_applies_the_filter_clause_to_the_query()
     {
         $termQuery = new TermQuery();
@@ -34,20 +36,20 @@ class DisMaxQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "dis_max": {
-        "queries": [
+        $expectedJson = <<<'JSON'
             {
-                "term": {
-                    "user": "john"
+                "dis_max": {
+                    "queries": [
+                        {
+                            "term": {
+                                "user": "john"
+                            }
+                        }
+                    ],
+                    "tie_breaker": 0.7
                 }
             }
-        ],
-        "tie_breaker": 0.7
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));

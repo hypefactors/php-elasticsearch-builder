@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\TermLevel;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Query\Query;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
@@ -166,7 +166,7 @@ class RangeQuery extends Query
 
         $validRelations = ['INTERSECTS', 'CONTAINS', 'DISJOINT', 'WITHIN'];
 
-        if (! in_array($relationUpper, $validRelations)) {
+        if (! in_array($relationUpper, $validRelations, true)) {
             throw new InvalidArgumentException("The [{$relation}] relation is invalid!");
         }
 

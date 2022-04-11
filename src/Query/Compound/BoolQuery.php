@@ -59,7 +59,7 @@ class BoolQuery extends Query
         $body = [];
 
         foreach ($this->queries as $clause => $queries) {
-            if (in_array($clause, $validClauseKeys)) {
+            if (in_array($clause, $validClauseKeys, true)) {
                 if (count($queries) === 1) {
                     $body[$clause] = $queries[0]->toArray();
                 } else {

@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
+use Hypefactors\ElasticBuilder\Sort\SortInterface;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-body.html#request-body-search-inner-hits

@@ -1,17 +1,19 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\Joining;
 
-use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use Hypefactors\ElasticBuilder\Query\Joining\NestedQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermsQuery;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
 class NestedQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $termQuery = new TermsQuery();
@@ -33,26 +35,28 @@ class NestedQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "nested": {
-        "path": "some-path",
-        "query": {
-            "terms": {
-                "user": [
-                    "john"
-                ]
+        $expectedJson = <<<'JSON'
+            {
+                "nested": {
+                    "path": "some-path",
+                    "query": {
+                        "terms": {
+                            "user": [
+                                "john"
+                            ]
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_score_mode_parameter()
     {
         $termQuery = new TermsQuery();
@@ -76,27 +80,29 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "nested": {
-        "path": "some-path",
-        "query": {
-            "terms": {
-                "user": [
-                    "john"
-                ]
+        $expectedJson = <<<'JSON'
+            {
+                "nested": {
+                    "path": "some-path",
+                    "query": {
+                        "terms": {
+                            "user": [
+                                "john"
+                            ]
+                        }
+                    },
+                    "score_mode": "avg"
+                }
             }
-        },
-        "score_mode": "avg"
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_ignore_unmapped_parameter()
     {
         $termQuery = new TermsQuery();
@@ -120,27 +126,29 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "nested": {
-        "path": "some-path",
-        "query": {
-            "terms": {
-                "user": [
-                    "john"
-                ]
+        $expectedJson = <<<'JSON'
+            {
+                "nested": {
+                    "path": "some-path",
+                    "query": {
+                        "terms": {
+                            "user": [
+                                "john"
+                            ]
+                        }
+                    },
+                    "ignore_unmapped": true
+                }
             }
-        },
-        "ignore_unmapped": true
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_passing_an_invalid_score_mode()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -156,7 +164,9 @@ JSON;
         $query->scoreMode('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_path_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -166,7 +176,9 @@ JSON;
         $query->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_query_are_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

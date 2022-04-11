@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\Joining;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Query\Query;
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html
@@ -55,7 +55,7 @@ class NestedQuery extends Query
 
         $validscoreModes = ['avg', 'max', 'min', 'none', 'sum'];
 
-        if (! in_array($scoreModeLower, $validscoreModes)) {
+        if (! in_array($scoreModeLower, $validscoreModes, true)) {
             throw new InvalidArgumentException("The [{$scoreMode}] score mode is invalid.");
         }
 

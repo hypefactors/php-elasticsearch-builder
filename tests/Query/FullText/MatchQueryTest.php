@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\FullText;
 
+use Hypefactors\ElasticBuilder\Query\FullText\MatchQuery;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Query\FullText\MatchQuery;
 
 class MatchQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $query = new MatchQuery();
@@ -23,19 +25,21 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": "this is a test"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": "this is a test"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
         $query = new MatchQuery();
@@ -52,22 +56,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "boost": 1.5
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "boost": 1.5
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_name_parameter()
     {
         $query = new MatchQuery();
@@ -84,22 +90,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "_name": "my-query-name"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "_name": "my-query-name"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_cut_off_frequency_parameter()
     {
         $query = new MatchQuery();
@@ -116,22 +124,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "cutoff_frequency": 0.001
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "cutoff_frequency": 0.001
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_fuziness_parameter()
     {
         $query = new MatchQuery();
@@ -148,22 +158,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "fuzziness": 2
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "fuzziness": 2
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_lenient()
     {
         $query = new MatchQuery();
@@ -180,22 +192,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "lenient": true
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "lenient": true
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_max_expansinons_parameter()
     {
         $query = new MatchQuery();
@@ -212,22 +226,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "max_expansions": 5
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "max_expansions": 5
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_prefix_length_parameter()
     {
         $query = new MatchQuery();
@@ -244,22 +260,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "prefix_length": 5
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "prefix_length": 5
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_operator()
     {
         $query = new MatchQuery();
@@ -276,22 +294,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match": {
-        "message": {
-            "query": "this is a test",
-            "operator": "and"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match": {
+                    "message": {
+                        "query": "this is a test",
+                        "operator": "and"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_passing_an_invalid_operator()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -301,7 +321,9 @@ JSON;
         $query->operator('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -311,7 +333,9 @@ JSON;
         $query->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_query_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

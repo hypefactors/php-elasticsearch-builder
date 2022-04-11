@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\Span;
 
-use PHPUnit\Framework\TestCase;
 use Hypefactors\ElasticBuilder\Query\Span\SpanOrQuery;
 use Hypefactors\ElasticBuilder\Query\Span\SpanTermQuery;
+use PHPUnit\Framework\TestCase;
 
 class SpanOrQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $spanTermQuery1 = new SpanTermQuery();
@@ -42,24 +44,24 @@ class SpanOrQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "span_or": {
-        "clauses": [
+        $expectedJson = <<<'JSON'
             {
-                "span_term": {
-                    "field-1": "value-1"
-                }
-            },
-            {
-                "span_term": {
-                    "field-2": "value-2"
+                "span_or": {
+                    "clauses": [
+                        {
+                            "span_term": {
+                                "field-1": "value-1"
+                            }
+                        },
+                        {
+                            "span_term": {
+                                "field-2": "value-2"
+                            }
+                        }
+                    ]
                 }
             }
-        ]
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));

@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Highlight;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/highlighting.html
@@ -82,7 +82,7 @@ final class Highlight implements HighlightInterface
     {
         $scannerLower = strtolower($scanner);
 
-        if (! in_array($scannerLower, self::VALID_BOUNDARY_SCANNERS)) {
+        if (! in_array($scannerLower, self::VALID_BOUNDARY_SCANNERS, true)) {
             throw new InvalidArgumentException("The [{$scanner}] boundary scanner is invalid!");
         }
 
@@ -108,7 +108,7 @@ final class Highlight implements HighlightInterface
     {
         $encoderLower = strtolower($encoder);
 
-        if (! in_array($encoderLower, self::VALID_ENCODERS)) {
+        if (! in_array($encoderLower, self::VALID_ENCODERS, true)) {
             throw new InvalidArgumentException("The [{$encoder}] encoder is invalid!");
         }
 
@@ -162,7 +162,7 @@ final class Highlight implements HighlightInterface
     {
         $fragmenterLower = strtolower($fragmenter);
 
-        if (! in_array($fragmenterLower, self::VALID_FRAGMENTERS)) {
+        if (! in_array($fragmenterLower, self::VALID_FRAGMENTERS, true)) {
             throw new InvalidArgumentException("The [{$fragmenter}] fragmenter is invalid!");
         }
 
@@ -306,7 +306,7 @@ final class Highlight implements HighlightInterface
     {
         $typeLower = strtolower($type);
 
-        if (! in_array($typeLower, self::VALID_TYPES)) {
+        if (! in_array($typeLower, self::VALID_TYPES, true)) {
             throw new InvalidArgumentException("The [{$type}] type is invalid!");
         }
 

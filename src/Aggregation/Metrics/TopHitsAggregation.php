@@ -1,15 +1,15 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Aggregation\Metrics;
 
-use InvalidArgumentException;
-use Hypefactors\ElasticBuilder\Core\Util;
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
-use Hypefactors\ElasticBuilder\Script\ScriptInterface;
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
+use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
+use Hypefactors\ElasticBuilder\Script\ScriptInterface;
+use Hypefactors\ElasticBuilder\Sort\SortInterface;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-top-hits-aggregation.html

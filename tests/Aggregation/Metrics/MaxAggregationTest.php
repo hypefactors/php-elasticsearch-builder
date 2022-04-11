@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Aggregation\Metrics;
 
+use Hypefactors\ElasticBuilder\Aggregation\Metrics\MaxAggregation;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Aggregation\Metrics\MaxAggregation;
 
 class MaxAggregationTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $aggregation = new MaxAggregation();
@@ -28,7 +30,9 @@ class MaxAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_metadata_parameter()
     {
         $aggregation = new MaxAggregation();
@@ -52,7 +56,9 @@ class MaxAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_have_a_single_nested_aggregation()
     {
         $aggregation1 = new MaxAggregation();
@@ -83,7 +89,9 @@ class MaxAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation1->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_have_multiple_nested_aggregation()
     {
         $aggregation1 = new MaxAggregation();
@@ -123,7 +131,9 @@ class MaxAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation1->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_name_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -133,7 +143,9 @@ class MaxAggregationTest extends TestCase
         $aggregation->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

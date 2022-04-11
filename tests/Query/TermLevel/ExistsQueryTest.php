@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\TermLevel\ExistsQuery;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Query\TermLevel\ExistsQuery;
 
 class ExistsQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $query = new ExistsQuery();
@@ -22,19 +24,21 @@ class ExistsQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "exists": {
-        "field": "my_field"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "exists": {
+                    "field": "my_field"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
         $query = new ExistsQuery();
@@ -48,20 +52,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "exists": {
-        "field": "my_field",
-        "boost": 1.5
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "exists": {
+                    "field": "my_field",
+                    "boost": 1.5
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_name_parameter()
     {
         $query = new ExistsQuery();
@@ -75,20 +81,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "exists": {
-        "field": "my_field",
-        "_name": "my-query-name"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "exists": {
+                    "field": "my_field",
+                    "_name": "my-query-name"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

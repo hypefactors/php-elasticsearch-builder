@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query;
 
-use stdClass;
 use Hypefactors\ElasticBuilder\Core\Util;
+use stdClass;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html

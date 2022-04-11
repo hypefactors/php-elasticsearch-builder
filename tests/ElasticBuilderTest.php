@@ -1,22 +1,24 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests;
 
-use stdClass;
-use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Sort\Sort;
-use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Aggregation\Bucketing\TermsAggregation;
 use Hypefactors\ElasticBuilder\ElasticBuilder;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
-use Hypefactors\ElasticBuilder\Aggregation\Bucketing\TermsAggregation;
+use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Sort\Sort;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class ElasticBuilderTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function add_docvalue_fields()
     {
         $builder = new ElasticBuilder();
@@ -33,7 +35,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_docvalue_fields_with_format()
     {
         $builder = new ElasticBuilder();
@@ -53,7 +57,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_explain()
     {
         $builder = new ElasticBuilder();
@@ -68,7 +74,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_collapse()
     {
         $builder = new ElasticBuilder();
@@ -85,7 +93,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_from()
     {
         $builder = new ElasticBuilder();
@@ -100,7 +110,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_size()
     {
         $builder = new ElasticBuilder();
@@ -115,7 +127,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_highlight()
     {
         $highlight = new Highlight();
@@ -144,10 +158,12 @@ class ElasticBuilderTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $builder->toArray());
+        $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_min_score()
     {
         $builder = new ElasticBuilder();
@@ -162,7 +178,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_script_field()
     {
         $script = new Script();
@@ -184,7 +202,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_search_after()
     {
         $builder = new ElasticBuilder();
@@ -199,7 +219,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_timeout()
     {
         $builder = new ElasticBuilder();
@@ -214,7 +236,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_search_type()
     {
         $builder = new ElasticBuilder();
@@ -229,7 +253,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_terminate_after()
     {
         $builder = new ElasticBuilder();
@@ -244,7 +270,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_sort()
     {
         $sort = new Sort();
@@ -265,7 +293,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_multiple_sorts()
     {
         $sort1 = new Sort();
@@ -297,7 +327,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_source()
     {
         $builder = new ElasticBuilder();
@@ -318,7 +350,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_query()
     {
         $termQuery = new TermQuery();
@@ -352,7 +386,9 @@ class ElasticBuilderTest extends TestCase
         $this->assertSame($expected, $builder->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_aggregation()
     {
         $aggregation1 = new TermsAggregation();

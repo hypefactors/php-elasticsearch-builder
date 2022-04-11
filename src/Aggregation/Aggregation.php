@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Aggregation;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
+use InvalidArgumentException;
 
 abstract class Aggregation implements AggregationInterface
 {

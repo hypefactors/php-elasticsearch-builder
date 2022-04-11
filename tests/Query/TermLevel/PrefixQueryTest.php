@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\TermLevel\PrefixQuery;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Query\TermLevel\PrefixQuery;
 
 class PrefixQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $query = new PrefixQuery();
@@ -23,19 +25,21 @@ class PrefixQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "prefix": {
-        "user": "ki"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "prefix": {
+                    "user": "ki"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
         $query = new PrefixQuery();
@@ -52,22 +56,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "prefix": {
-        "user": {
-            "value": "ki",
-            "boost": 1.5
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "prefix": {
+                    "user": {
+                        "value": "ki",
+                        "boost": 1.5
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_name_parameter()
     {
         $query = new PrefixQuery();
@@ -84,22 +90,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "prefix": {
-        "user": {
-            "value": "ki",
-            "_name": "my-query-name"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "prefix": {
+                    "user": {
+                        "value": "ki",
+                        "_name": "my-query-name"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_rewrite_parameter()
     {
         $query = new PrefixQuery();
@@ -116,22 +124,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "prefix": {
-        "user": {
-            "value": "ki",
-            "rewrite": "rewrite"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "prefix": {
+                    "user": {
+                        "value": "ki",
+                        "rewrite": "rewrite"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function exception_will_be_thrown_if_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -141,7 +151,9 @@ JSON;
         $query->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function exception_will_be_thrown_if_value_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

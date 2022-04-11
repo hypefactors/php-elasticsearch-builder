@@ -1,18 +1,20 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Sort;
 
-use stdClass;
+use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Sort\Sort;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Sort\Sort;
-use Hypefactors\ElasticBuilder\Script\Script;
+use stdClass;
 
 class SortTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_field_without_order()
     {
         $sort = new Sort();
@@ -22,17 +24,19 @@ class SortTest extends TestCase
             'my-field' => new stdClass(),
         ];
 
-        $expectedJson = <<<JSON
-{
-    "my-field": {}
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "my-field": {}
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_order()
     {
         $sort = new Sort();
@@ -43,17 +47,19 @@ JSON;
             'my-field' => 'desc',
         ];
 
-        $expectedJson = <<<JSON
-{
-    "my-field": "desc"
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "my-field": "desc"
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_missing()
     {
         $sort = new Sort();
@@ -66,19 +72,21 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "my-field": {
-        "missing": "_last"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "my-field": {
+                    "missing": "_last"
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_sorting_mode()
     {
         $sort = new Sort();
@@ -91,19 +99,21 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "my-field": {
-        "mode": "avg"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "my-field": {
+                    "mode": "avg"
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_sorting_mode_with_the_order()
     {
         $sort = new Sort();
@@ -118,20 +128,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "my-field": {
-        "order": "desc",
-        "mode": "avg"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "my-field": {
+                    "order": "desc",
+                    "mode": "avg"
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_sorting_numeric_type()
     {
         $sort = new Sort();
@@ -144,19 +156,21 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "my-field": {
-        "numeric_type": "long"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "my-field": {
+                    "numeric_type": "long"
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_sorting_unmapped_type()
     {
         $sort = new Sort();
@@ -169,19 +183,21 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "my-field": {
-        "unmapped_type": "long"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "my-field": {
+                    "unmapped_type": "long"
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_sorting_with_a_script()
     {
         $script = new Script();
@@ -208,26 +224,28 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "_script": {
-        "order": "desc",
-        "script": {
-            "lang": "painless",
-            "source": "doc['field_name'].value * params.factor",
-            "params": {
-                "factor": 1.1
+        $expectedJson = <<<'JSON'
+            {
+                "_script": {
+                    "order": "desc",
+                    "script": {
+                        "lang": "painless",
+                        "source": "doc['field_name'].value * params.factor",
+                        "params": {
+                            "factor": 1.1
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertEquals($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_order()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -237,7 +255,9 @@ JSON;
         $sort->order('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_mode()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -247,7 +267,9 @@ JSON;
         $sort->mode('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_numeric_type()
     {
         $this->expectException(InvalidArgumentException::class);

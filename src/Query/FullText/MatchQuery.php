@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\FullText;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Query\Query;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html
@@ -98,7 +98,7 @@ class MatchQuery extends Query
 
         $validOperators = ['and', 'or'];
 
-        if (! in_array($operatorLower, $validOperators)) {
+        if (! in_array($operatorLower, $validOperators, true)) {
             throw new InvalidArgumentException("The [{$operator}] operator is invalid.");
         }
 
