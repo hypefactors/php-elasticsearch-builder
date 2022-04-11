@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\TermLevel\RegexpQuery;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Query\TermLevel\RegexpQuery;
 
 class RegexpQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $query = new RegexpQuery();
@@ -23,19 +25,21 @@ class RegexpQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "regexp": {
-        "name.first": "s.*"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "regexp": {
+                    "name.first": "s.*"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
         $query = new RegexpQuery();
@@ -52,22 +56,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "regexp": {
-        "name.first": {
-            "value": "s.*",
-            "boost": 1.5
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "regexp": {
+                    "name.first": {
+                        "value": "s.*",
+                        "boost": 1.5
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_name_parameter()
     {
         $query = new RegexpQuery();
@@ -84,22 +90,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "regexp": {
-        "name.first": {
-            "value": "s.*",
-            "_name": "my-query-name"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "regexp": {
+                    "name.first": {
+                        "value": "s.*",
+                        "_name": "my-query-name"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_flags_parameter_from_a_string()
     {
         $query = new RegexpQuery();
@@ -116,22 +124,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "regexp": {
-        "name.first": {
-            "value": "s.*",
-            "flags": "INTERSECTION|COMPLEMENT|EMPTY"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "regexp": {
+                    "name.first": {
+                        "value": "s.*",
+                        "flags": "INTERSECTION|COMPLEMENT|EMPTY"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_flags_parameter_from_an_array()
     {
         $query = new RegexpQuery();
@@ -148,22 +158,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "regexp": {
-        "name.first": {
-            "value": "s.*",
-            "flags": "INTERSECTION|COMPLEMENT|EMPTY"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "regexp": {
+                    "name.first": {
+                        "value": "s.*",
+                        "flags": "INTERSECTION|COMPLEMENT|EMPTY"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_max_determinized_states_parameter()
     {
         $query = new RegexpQuery();
@@ -180,22 +192,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "regexp": {
-        "name.first": {
-            "value": "s.*",
-            "max_determinized_states": 5
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "regexp": {
+                    "name.first": {
+                        "value": "s.*",
+                        "max_determinized_states": 5
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_rewrite_parameter()
     {
         $query = new RegexpQuery();
@@ -212,22 +226,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "regexp": {
-        "name.first": {
-            "value": "s.*",
-            "rewrite": "rewrite"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "regexp": {
+                    "name.first": {
+                        "value": "s.*",
+                        "rewrite": "rewrite"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_there_are_invalid_flags()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -237,7 +253,9 @@ JSON;
         $query->flags(['foo', 'COMPLEMENT', 'bAr']);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -247,7 +265,9 @@ JSON;
         $query->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_value_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\FullText;
 
+use Hypefactors\ElasticBuilder\Query\FullText\MatchPhrasePrefixQuery;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Query\FullText\MatchPhrasePrefixQuery;
 
 class MatchPhrasePrefixQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $query = new MatchPhrasePrefixQuery();
@@ -23,19 +25,21 @@ class MatchPhrasePrefixQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match_phrase_prefix": {
-        "message": "this is a test"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match_phrase_prefix": {
+                    "message": "this is a test"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
         $query = new MatchPhrasePrefixQuery();
@@ -52,22 +56,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match_phrase_prefix": {
-        "message": {
-            "query": "this is a test",
-            "boost": 1.5
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match_phrase_prefix": {
+                    "message": {
+                        "query": "this is a test",
+                        "boost": 1.5
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_name_parameter()
     {
         $query = new MatchPhrasePrefixQuery();
@@ -84,22 +90,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match_phrase_prefix": {
-        "message": {
-            "query": "this is a test",
-            "_name": "my-query-name"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match_phrase_prefix": {
+                    "message": {
+                        "query": "this is a test",
+                        "_name": "my-query-name"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_analyzer_parameter()
     {
         $query = new MatchPhrasePrefixQuery();
@@ -116,22 +124,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match_phrase_prefix": {
-        "message": {
-            "query": "this is a test",
-            "analyzer": "something"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match_phrase_prefix": {
+                    "message": {
+                        "query": "this is a test",
+                        "analyzer": "something"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_max_expansions_parameter()
     {
         $query = new MatchPhrasePrefixQuery();
@@ -148,22 +158,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match_phrase_prefix": {
-        "message": {
-            "query": "this is a test",
-            "max_expansions": 10
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match_phrase_prefix": {
+                    "message": {
+                        "query": "this is a test",
+                        "max_expansions": 10
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_slop_parameter()
     {
         $query = new MatchPhrasePrefixQuery();
@@ -180,22 +192,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match_phrase_prefix": {
-        "message": {
-            "query": "this is a test",
-            "slop": 10
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match_phrase_prefix": {
+                    "message": {
+                        "query": "this is a test",
+                        "slop": 10
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_zero_terms_query_parameter()
     {
         $query = new MatchPhrasePrefixQuery();
@@ -212,22 +226,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "match_phrase_prefix": {
-        "message": {
-            "query": "this is a test",
-            "zero_terms_query": "all"
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "match_phrase_prefix": {
+                    "message": {
+                        "query": "this is a test",
+                        "zero_terms_query": "all"
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_zero_terms_query_status()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -238,7 +254,9 @@ JSON;
         $query->zeroTermsQuery('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -248,7 +266,9 @@ JSON;
         $query->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_query_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

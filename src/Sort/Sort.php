@@ -1,14 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Sort;
 
-use stdClass;
-use InvalidArgumentException;
-use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Core\GeoPoint;
+use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
+use InvalidArgumentException;
+use stdClass;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-body.html#request-body-search-sort
@@ -121,7 +121,7 @@ final class Sort implements SortInterface
     {
         $modeLower = strtolower($mode);
 
-        if (! in_array($modeLower, self::VALID_MODES)) {
+        if (! in_array($modeLower, self::VALID_MODES, true)) {
             throw new InvalidArgumentException("The [{$mode}] mode is invalid!");
         }
 
@@ -137,7 +137,7 @@ final class Sort implements SortInterface
     {
         $numericTypeLower = strtolower($numericType);
 
-        if (! in_array($numericTypeLower, self::VALID_NUMERIC_TYPES)) {
+        if (! in_array($numericTypeLower, self::VALID_NUMERIC_TYPES, true)) {
             throw new InvalidArgumentException("The [{$numericType}] numeric type is invalid!");
         }
 
@@ -153,7 +153,7 @@ final class Sort implements SortInterface
     {
         $orderLower = strtolower($order);
 
-        if (! in_array($orderLower, self::VALID_ORDERS)) {
+        if (! in_array($orderLower, self::VALID_ORDERS, true)) {
             throw new InvalidArgumentException("The [{$order}] order is invalid!");
         }
 

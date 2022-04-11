@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Finder\SplFileInfo;
+
 // Directories to not scan
 $excludeDirs = [
     'vendor/',
@@ -12,18 +14,16 @@ $excludeFiles = [];
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
     ->exclude($excludeDirs)
-    ->ignoreDotFiles(true)->ignoreVCS(true)
-    ->filter(function (\SplFileInfo $file) use ($excludeFiles) {
+    ->ignoreDotFiles(true)
+    ->ignoreVCS(true)
+    ->filter(function (SplFileInfo $file) use ($excludeFiles) {
         return ! in_array($file->getRelativePathName(), $excludeFiles);
     })
 ;
 
-return Hypefactors\CodeStandards\Config::create()
+return (new Hypefactors\CodeStandards\Config())
     ->setFinder($finder)
     ->setUsingCache(false)
     ->setRiskyAllowed(true)
     ->withPHPUnitRules()
-    ->setRules([
-        'php_unit_strict' => false,
-    ])
 ;

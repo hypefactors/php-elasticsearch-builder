@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Script;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Core\Util;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html

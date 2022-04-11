@@ -1,22 +1,24 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Aggregation\Metrics;
 
-use stdClass;
-use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Sort\Sort;
-use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Aggregation\Metrics\TopHitsAggregation;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
-use Hypefactors\ElasticBuilder\Aggregation\Metrics\TopHitsAggregation;
+use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Sort\Sort;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class TopHitsAggregationTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $aggregation = new TopHitsAggregation();
@@ -34,7 +36,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_from_parameter()
     {
         $aggregation = new TopHitsAggregation();
@@ -54,7 +58,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_size_parameter()
     {
         $aggregation = new TopHitsAggregation();
@@ -74,7 +80,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_add_a_single_sort()
     {
         $sort = new Sort();
@@ -100,7 +108,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expected, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_add_a_multiple_sorts()
     {
         $sort1 = new Sort();
@@ -131,7 +141,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expected, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_add_track_scores()
     {
         $aggregation = new TopHitsAggregation();
@@ -151,7 +163,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expected, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_add_version()
     {
         $aggregation = new TopHitsAggregation();
@@ -171,7 +185,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expected, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_add_explain()
     {
         $aggregation = new TopHitsAggregation();
@@ -191,7 +207,9 @@ class TopHitsAggregationTest extends TestCase
         $this->assertSame($expected, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_highlight_query_globally()
     {
         $termQuery = new TermQuery();
@@ -235,36 +253,38 @@ class TopHitsAggregationTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "genres": {
-        "top_hits": {
-            "field": "genre",
-            "highlight": {
-                "highlight_query": {
-                    "bool": {
-                        "must": {
-                            "term": {
-                                "user": "john"
+        $expectedJson = <<<'JSON'
+            {
+                "genres": {
+                    "top_hits": {
+                        "field": "genre",
+                        "highlight": {
+                            "highlight_query": {
+                                "bool": {
+                                    "must": {
+                                        "term": {
+                                            "user": "john"
+                                        }
+                                    },
+                                    "minimum_should_match": 0
+                                }
+                            },
+                            "fields": {
+                                "field-a": {}
                             }
-                        },
-                        "minimum_should_match": 0
+                        }
                     }
-                },
-                "fields": {
-                    "field-a": {}
                 }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
-        $this->assertEquals($expectedArray, $aggregation->toArray());
-        $this->assertEquals($expectedJson, $aggregation->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $aggregation->toArray());
+        $this->assertSame($expectedJson, $aggregation->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_source_parameter()
     {
         $aggregation = new TopHitsAggregation();
@@ -284,7 +304,9 @@ JSON;
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_a_script()
     {
         $script = new Script();
@@ -311,7 +333,9 @@ JSON;
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_docvalue_fields()
     {
         $aggregation = new TopHitsAggregation();
@@ -333,7 +357,9 @@ JSON;
         $this->assertSame($expected, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function add_docvalue_fields_with_format()
     {
         $aggregation = new TopHitsAggregation();
@@ -358,7 +384,9 @@ JSON;
         $this->assertSame($expected, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_stored_fields_parameter()
     {
         $aggregation = new TopHitsAggregation();
@@ -384,7 +412,9 @@ JSON;
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_have_a_single_nested_aggregation()
     {
         $aggregation1 = new TopHitsAggregation();
@@ -415,7 +445,9 @@ JSON;
         $this->assertSame($expectedArray, $aggregation1->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_have_multiple_nested_aggregation()
     {
         $aggregation1 = new TopHitsAggregation();
@@ -455,7 +487,9 @@ JSON;
         $this->assertSame($expectedArray, $aggregation1->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_name_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -465,7 +499,9 @@ JSON;
         $aggregation->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

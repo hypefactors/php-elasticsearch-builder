@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\TermLevel;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Query\Query;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html

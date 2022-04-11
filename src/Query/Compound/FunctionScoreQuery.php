@@ -1,14 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\Compound;
 
-use InvalidArgumentException;
 use Hypefactors\ElasticBuilder\Core\Util;
+use Hypefactors\ElasticBuilder\Query\Compound\ScoreFunctions\ScoreFunction;
 use Hypefactors\ElasticBuilder\Query\Query;
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
-use Hypefactors\ElasticBuilder\Query\Compound\ScoreFunctions\ScoreFunction;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html
@@ -28,7 +28,7 @@ class FunctionScoreQuery extends Query
 
         $validModes = ['multiply', 'sum', 'avg', 'first', 'max', 'min'];
 
-        if (! in_array($modeLower, $validModes)) {
+        if (! in_array($modeLower, $validModes, true)) {
             throw new InvalidArgumentException("The [{$mode}] mode is invalid.");
         }
 
@@ -43,7 +43,7 @@ class FunctionScoreQuery extends Query
 
         $validModes = ['multiply', 'replace', 'sum', 'avg', 'max', 'min'];
 
-        if (! in_array($modeLower, $validModes)) {
+        if (! in_array($modeLower, $validModes, true)) {
             throw new InvalidArgumentException("The [{$mode}] mode is invalid.");
         }
 

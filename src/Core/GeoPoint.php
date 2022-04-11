@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
@@ -44,7 +44,7 @@ final class GeoPoint
 
         $validOperators = ['arc', 'plan'];
 
-        if (! in_array($distanceTypeLower, $validOperators)) {
+        if (! in_array($distanceTypeLower, $validOperators, true)) {
             throw new InvalidArgumentException("The [{$distanceType}] distance type is invalid.");
         }
 

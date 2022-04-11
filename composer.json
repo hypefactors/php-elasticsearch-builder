@@ -22,7 +22,7 @@
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
-        "hypefactors/php-code-standards": "^1.1",
+        "hypefactors/php-code-standards": "^2.0",
         "phpunit/phpunit": "^9.0"
     },
     "autoload": {
@@ -38,7 +38,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
     },
     "extra": {
         "branch-alias": {
@@ -46,8 +49,8 @@
         }
     },
     "scripts": {
-        "cs:check": "./vendor/bin/php-cs-fixer fix --verbose --ansi --show-progress=estimating --diff --dry-run --config .php_cs.php",
-        "cs:fix": "./vendor/bin/php-cs-fixer fix --verbose --ansi --show-progress=estimating --config .php_cs.php",
+        "cs": "./vendor/bin/php-cs-fixer fix --verbose --ansi --show-progress=dots",
+        "cs:ci": "./vendor/bin/php-cs-fixer fix --verbose --ansi --show-progress=dots --diff --dry-run",
         "test": "./vendor/bin/phpunit --verbose --colors=always"
     }
 }

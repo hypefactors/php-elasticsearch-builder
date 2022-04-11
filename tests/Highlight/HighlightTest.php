@@ -1,20 +1,22 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Highlight;
 
-use stdClass;
-use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
-use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\ExistsQuery;
+use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class HighlightTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_chars_globally()
     {
         $highlight = new Highlight();
@@ -30,21 +32,23 @@ class HighlightTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boundary_chars": ".,!?",
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "boundary_chars": ".,!?",
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_chars_on_a_field()
     {
         $highlight = new Highlight();
@@ -61,22 +65,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "boundary_chars": ".,!?"
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "boundary_chars": ".,!?"
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_max_scan_globally()
     {
         $highlight = new Highlight();
@@ -92,21 +98,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boundary_max_scan": 5,
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "boundary_max_scan": 5,
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_max_scan_on_a_field()
     {
         $highlight = new Highlight();
@@ -123,22 +131,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "boundary_max_scan": 5
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "boundary_max_scan": 5
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_scanner_globally()
     {
         $highlight = new Highlight();
@@ -154,21 +164,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boundary_scanner": "chars",
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "boundary_scanner": "chars",
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_scanner_on_a_field()
     {
         $highlight = new Highlight();
@@ -185,22 +197,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "boundary_scanner": "chars"
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "boundary_scanner": "chars"
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_scanner_locale_globally()
     {
         $highlight = new Highlight();
@@ -216,21 +230,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boundary_scanner_locale": "en-US",
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "boundary_scanner_locale": "en-US",
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_boundary_scanner_locale_on_a_field()
     {
         $highlight = new Highlight();
@@ -247,22 +263,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "boundary_scanner_locale": "en-US"
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "boundary_scanner_locale": "en-US"
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_encoder()
     {
         $highlight = new Highlight();
@@ -278,21 +296,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "encoder": "html",
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "encoder": "html",
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_a_single_field()
     {
         $highlight = new Highlight();
@@ -304,19 +324,21 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "my-field": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "my-field": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_multiple_fields()
     {
         $highlight = new Highlight();
@@ -330,20 +352,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_multiple_fields_from_an_array()
     {
         $highlight = new Highlight();
@@ -361,22 +385,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "number_of_fragments": 1
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "number_of_fragments": 1
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_force_source_globally()
     {
         $highlight = new Highlight();
@@ -392,21 +418,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "force_source": true,
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "force_source": true,
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_force_source_on_a_field()
     {
         $highlight = new Highlight();
@@ -423,22 +451,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "force_source": true
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "force_source": true
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_fragmenter_globally()
     {
         $highlight = new Highlight();
@@ -454,21 +484,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fragmenter": "simple",
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fragmenter": "simple",
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_fragmenter_on_a_field()
     {
         $highlight = new Highlight();
@@ -485,22 +517,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "fragmenter": "simple"
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "fragmenter": "simple"
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_fragment_offset_globally()
     {
         $highlight = new Highlight();
@@ -515,21 +549,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "type": "fvh",
-    "fragment_offset": 1,
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "type": "fvh",
+                "fragment_offset": 1,
+                "fields": {
+                    "field-a": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_fragment_offset_on_a_field()
     {
         $highlight = new Highlight();
@@ -547,23 +583,25 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "type": "fvh",
-            "fragment_offset": 1
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "type": "fvh",
+                        "fragment_offset": 1
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_fragment_size_globally()
     {
         $highlight = new Highlight();
@@ -577,20 +615,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fragment_size": 1,
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fragment_size": 1,
+                "fields": {
+                    "field-a": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_fragment_size_on_a_field()
     {
         $highlight = new Highlight();
@@ -607,22 +647,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "fragment_size": 1
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "fragment_size": 1
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_highlight_query_globally()
     {
         $existsQuery = new ExistsQuery();
@@ -663,34 +705,36 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "highlight_query": {
-        "bool": {
-            "must": {
-                "term": {
-                    "user": "john"
+        $expectedJson = <<<'JSON'
+            {
+                "highlight_query": {
+                    "bool": {
+                        "must": {
+                            "term": {
+                                "user": "john"
+                            }
+                        },
+                        "should": {
+                            "exists": {
+                                "field": "user"
+                            }
+                        },
+                        "minimum_should_match": 0
+                    }
+                },
+                "fields": {
+                    "field-a": {}
                 }
-            },
-            "should": {
-                "exists": {
-                    "field": "user"
-                }
-            },
-            "minimum_should_match": 0
-        }
-    },
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_highlight_query_on_a_field()
     {
         $existsQuery = new ExistsQuery();
@@ -732,35 +776,37 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "highlight_query": {
-                "bool": {
-                    "must": {
-                        "term": {
-                            "user": "john"
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "highlight_query": {
+                            "bool": {
+                                "must": {
+                                    "term": {
+                                        "user": "john"
+                                    }
+                                },
+                                "should": {
+                                    "exists": {
+                                        "field": "user"
+                                    }
+                                },
+                                "minimum_should_match": 0
+                            }
                         }
-                    },
-                    "should": {
-                        "exists": {
-                            "field": "user"
-                        }
-                    },
-                    "minimum_should_match": 0
+                    }
                 }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_matched_fields_on_a_field()
     {
         $highlight = new Highlight();
@@ -780,25 +826,27 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "type": "fvh",
-            "matched_fields": [
-                "something"
-            ]
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "type": "fvh",
+                        "matched_fields": [
+                            "something"
+                        ]
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_no_match_size_on_a_field()
     {
         $highlight = new Highlight();
@@ -815,22 +863,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "no_match_size": 1
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "no_match_size": 1
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_number_of_fragments_globally()
     {
         $highlight = new Highlight();
@@ -844,20 +894,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "number_of_fragments": 1,
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "number_of_fragments": 1,
+                "fields": {
+                    "field-a": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_number_of_fragments_on_a_field()
     {
         $highlight = new Highlight();
@@ -874,22 +926,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "number_of_fragments": 1
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "number_of_fragments": 1
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_score_order_globally()
     {
         $highlight = new Highlight();
@@ -903,20 +957,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "order": "score",
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "order": "score",
+                "fields": {
+                    "field-a": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_score_order_on_a_field()
     {
         $highlight = new Highlight();
@@ -933,22 +989,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "order": "score"
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "order": "score"
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_phrase_limit()
     {
         $highlight = new Highlight();
@@ -964,21 +1022,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "phrase_limit": 10,
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "phrase_limit": 10,
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_pre_tags_globally()
     {
         $highlight = new Highlight();
@@ -994,22 +1054,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "pre_tags": [
-        "<em>"
-    ],
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "pre_tags": [
+                    "<em>"
+                ],
+                "fields": {
+                    "field-a": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_pre_tags_on_a_field()
     {
         $highlight = new Highlight();
@@ -1026,23 +1088,25 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "pre_tags": [
-                "<em>"
-            ]
-        }
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "pre_tags": [
+                            "<em>"
+                        ]
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_post_tags_globally()
     {
         $highlight = new Highlight();
@@ -1059,21 +1123,23 @@ JSON;
         ];
 
         $expectedJson = <<<JSON
-{
-    "post_tags": [
-        "<\/em>"
-    ],
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+            {
+                "post_tags": [
+                    "<\/em>"
+                ],
+                "fields": {
+                    "field-a": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_post_tags_on_a_field()
     {
         $highlight = new Highlight();
@@ -1091,22 +1157,24 @@ JSON;
         ];
 
         $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "post_tags": [
-                "<\/em>"
-            ]
-        }
-    }
-}
-JSON;
+            {
+                "fields": {
+                    "field-a": {
+                        "post_tags": [
+                            "<\/em>"
+                        ]
+                    }
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_require_field_match_globally()
     {
         $highlight = new Highlight();
@@ -1122,21 +1190,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "require_field_match": true,
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "require_field_match": true,
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_require_field_match_on_a_field()
     {
         $highlight = new Highlight();
@@ -1153,22 +1223,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "require_field_match": true
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "require_field_match": true
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_tags_schema_as_styled()
     {
         $highlight = new Highlight();
@@ -1182,20 +1254,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "tags_schema": "styled",
-    "fields": {
-        "field-a": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "tags_schema": "styled",
+                "fields": {
+                    "field-a": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_type_globally()
     {
         $highlight = new Highlight();
@@ -1211,21 +1285,23 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "type": "plain",
-    "fields": {
-        "field-a": {},
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "type": "plain",
+                "fields": {
+                    "field-a": {},
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_set_the_type_on_a_field()
     {
         $highlight = new Highlight();
@@ -1242,22 +1318,24 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "fields": {
-        "field-a": {
-            "type": "plain"
-        },
-        "field-b": {}
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "fields": {
+                    "field-a": {
+                        "type": "plain"
+                    },
+                    "field-b": {}
+                }
+            }
+            JSON;
 
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertEquals($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_boundary_scanner()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1267,7 +1345,9 @@ JSON;
         $highlight->boundaryScanner('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_encoder()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1277,7 +1357,9 @@ JSON;
         $highlight->encoder('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_type()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1287,7 +1369,9 @@ JSON;
         $highlight->type('foo');
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_fragmenter()
     {
         $this->expectException(InvalidArgumentException::class);

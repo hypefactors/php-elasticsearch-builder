@@ -1,15 +1,17 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
-use PHPUnit\Framework\TestCase;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TypeQuery;
+use PHPUnit\Framework\TestCase;
 
 class TypeQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $query = new TypeQuery();
@@ -21,19 +23,21 @@ class TypeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "type": {
-        "value": "_doc"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "type": {
+                    "value": "_doc"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
         $query = new TypeQuery();
@@ -47,20 +51,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "type": {
-        "value": "_doc",
-        "boost": 1.5
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "type": {
+                    "value": "_doc",
+                    "boost": 1.5
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_name_parameter()
     {
         $query = new TypeQuery();
@@ -74,14 +80,14 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "type": {
-        "value": "_doc",
-        "_name": "my-query-name"
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "type": {
+                    "value": "_doc",
+                    "_name": "my-query-name"
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));

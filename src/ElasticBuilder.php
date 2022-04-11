@@ -1,17 +1,17 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder;
 
-use InvalidArgumentException;
-use Hypefactors\ElasticBuilder\Core\Util;
+use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
 use Hypefactors\ElasticBuilder\Core\InnerHits;
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
+use Hypefactors\ElasticBuilder\Core\Util;
+use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
-use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
-use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
+use Hypefactors\ElasticBuilder\Sort\SortInterface;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-body.html
@@ -222,7 +222,7 @@ class ElasticBuilder
 
         $validTypes = ['dfs_query_then_fetch', 'query_then_fetch'];
 
-        if (! in_array($typeLower, $validTypes)) {
+        if (! in_array($typeLower, $validTypes, true)) {
             throw new InvalidArgumentException("The [{$type}] type is not valid!");
         }
 

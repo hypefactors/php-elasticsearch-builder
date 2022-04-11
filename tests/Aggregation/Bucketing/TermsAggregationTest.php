@@ -1,17 +1,19 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Aggregation\Bucketing;
 
+use Hypefactors\ElasticBuilder\Aggregation\Bucketing\TermsAggregation;
+use Hypefactors\ElasticBuilder\Script\Script;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Script\Script;
-use Hypefactors\ElasticBuilder\Aggregation\Bucketing\TermsAggregation;
 
 class TermsAggregationTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query()
     {
         $aggregation = new TermsAggregation();
@@ -29,7 +31,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_metadata_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -53,7 +57,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_collect_mode_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -73,7 +79,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_order_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -95,7 +103,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_script_parameter()
     {
         $script = new Script();
@@ -122,7 +132,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_size_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -142,7 +154,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_shard_size_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -162,7 +176,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_show_term_doc_count_error_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -182,7 +198,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_min_doc_count_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -202,7 +220,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_shard_min_doc_count_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -222,7 +242,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_include_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -242,7 +264,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_exclude_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -262,7 +286,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_missing_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -282,7 +308,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_execution_hint_parameter()
     {
         $aggregation = new TermsAggregation();
@@ -302,7 +330,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_have_a_single_nested_aggregation()
     {
         $aggregation1 = new TermsAggregation();
@@ -333,7 +363,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation1->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_have_multiple_nested_aggregation()
     {
         $aggregation1 = new TermsAggregation();
@@ -373,7 +405,9 @@ class TermsAggregationTest extends TestCase
         $this->assertSame($expectedArray, $aggregation1->toArray());
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_name_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -383,7 +417,9 @@ class TermsAggregationTest extends TestCase
         $aggregation->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_field_is_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -394,7 +430,9 @@ class TermsAggregationTest extends TestCase
         $aggregation->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_collect_mode_is_invalid_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -407,7 +445,9 @@ class TermsAggregationTest extends TestCase
         $aggregation->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_execution_hint_is_invalid_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);

@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Aggregation\Bucketing;
 
-use InvalidArgumentException;
-use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
+use Hypefactors\ElasticBuilder\Core\Util;
+use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
@@ -19,7 +19,7 @@ class TermsAggregation extends Aggregation
 
         $validModes = ['breadth_first', 'depth_first'];
 
-        if (! in_array($modeLower, $validModes)) {
+        if (! in_array($modeLower, $validModes, true)) {
             throw new InvalidArgumentException("The [{$mode}] mode is not valid!");
         }
 
@@ -101,7 +101,7 @@ class TermsAggregation extends Aggregation
 
         $validHints = ['map', 'global_ordinals', 'global_ordinals_hash', 'global_ordinals_low_cardinality'];
 
-        if (! in_array($hintLower, $validHints)) {
+        if (! in_array($hintLower, $validHints, true)) {
             throw new InvalidArgumentException("The [{$hint}] hint is not valid!");
         }
 

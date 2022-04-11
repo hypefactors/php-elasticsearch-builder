@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\Compound;
 
-use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use Hypefactors\ElasticBuilder\Query\Compound\BoostingQuery;
+use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
+use PHPUnit\Framework\TestCase;
 
 class BoostingQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_positive_parameter()
     {
         $termQuery = new TermQuery();
@@ -30,23 +32,25 @@ class BoostingQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boosting": {
-        "positive": {
-            "term": {
-                "user": "john"
+        $expectedJson = <<<'JSON'
+            {
+                "boosting": {
+                    "positive": {
+                        "term": {
+                            "user": "john"
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_negative_parameter()
     {
         $termQuery = new TermQuery();
@@ -66,23 +70,25 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boosting": {
-        "negative": {
-            "term": {
-                "user": "john"
+        $expectedJson = <<<'JSON'
+            {
+                "boosting": {
+                    "negative": {
+                        "term": {
+                            "user": "john"
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_positive_and_negative_parameters()
     {
         $termQuery = new TermQuery();
@@ -108,28 +114,30 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boosting": {
-        "positive": {
-            "term": {
-                "user": "john"
+        $expectedJson = <<<'JSON'
+            {
+                "boosting": {
+                    "positive": {
+                        "term": {
+                            "user": "john"
+                        }
+                    },
+                    "negative": {
+                        "term": {
+                            "user": "john"
+                        }
+                    }
+                }
             }
-        },
-        "negative": {
-            "term": {
-                "user": "john"
-            }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_negative_boost_parameter()
     {
         $query = new BoostingQuery();
@@ -141,13 +149,13 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "boosting": {
-        "negative_boost": 2
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "boosting": {
+                    "negative_boost": 2
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));

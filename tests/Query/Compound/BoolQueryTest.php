@@ -1,17 +1,19 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\Compound;
 
-use PHPUnit\Framework\TestCase;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
-use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\ExistsQuery;
+use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
+use PHPUnit\Framework\TestCase;
 
 class BoolQueryTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_applies_the_filter_clause_to_the_query()
     {
         $termQuery = new TermQuery();
@@ -31,23 +33,25 @@ class BoolQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "bool": {
-        "filter": {
-            "term": {
-                "user": "john"
+        $expectedJson = <<<'JSON'
+            {
+                "bool": {
+                    "filter": {
+                        "term": {
+                            "user": "john"
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_applies_the_must_clause_to_the_query()
     {
         $existsQuery = new ExistsQuery();
@@ -66,23 +70,25 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "bool": {
-        "must": {
-            "exists": {
-                "field": "user"
+        $expectedJson = <<<'JSON'
+            {
+                "bool": {
+                    "must": {
+                        "exists": {
+                            "field": "user"
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_applies_the_must_not_clause_to_the_query()
     {
         $existsQuery = new ExistsQuery();
@@ -101,23 +107,25 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "bool": {
-        "must_not": {
-            "exists": {
-                "field": "user"
+        $expectedJson = <<<'JSON'
+            {
+                "bool": {
+                    "must_not": {
+                        "exists": {
+                            "field": "user"
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_applies_the_should_clause_to_the_query()
     {
         $existsQuery = new ExistsQuery();
@@ -136,23 +144,25 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "bool": {
-        "should": {
-            "exists": {
-                "field": "user"
+        $expectedJson = <<<'JSON'
+            {
+                "bool": {
+                    "should": {
+                        "exists": {
+                            "field": "user"
+                        }
+                    }
+                }
             }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_can_combine_multiple_clauses_and_applies_them_to_the_query()
     {
         $existsQuery1 = new ExistsQuery();
@@ -192,29 +202,29 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "bool": {
-        "must": [
+        $expectedJson = <<<'JSON'
             {
-                "term": {
-                    "user": "john"
-                }
-            },
-            {
-                "exists": {
-                    "field": "user"
+                "bool": {
+                    "must": [
+                        {
+                            "term": {
+                                "user": "john"
+                            }
+                        },
+                        {
+                            "exists": {
+                                "field": "user"
+                            }
+                        }
+                    ],
+                    "must_not": {
+                        "exists": {
+                            "field": "other_field"
+                        }
+                    }
                 }
             }
-        ],
-        "must_not": {
-            "exists": {
-                "field": "other_field"
-            }
-        }
-    }
-}
-JSON;
+            JSON;
 
         $this->assertSame($expectedArray, $query->toArray());
         $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));

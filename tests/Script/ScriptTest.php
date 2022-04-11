@@ -1,16 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Script;
 
+use Hypefactors\ElasticBuilder\Script\Script;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Hypefactors\ElasticBuilder\Script\Script;
 
 class ScriptTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_source_parameter()
     {
         $script = new Script();
@@ -20,17 +22,19 @@ class ScriptTest extends TestCase
             'source' => 'script source',
         ];
 
-        $expectedJson = <<<JSON
-{
-    "source": "script source"
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "source": "script source"
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $script->toArray());
         $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_id_parameter()
     {
         $script = new Script();
@@ -40,17 +44,19 @@ JSON;
             'id' => 'my id',
         ];
 
-        $expectedJson = <<<JSON
-{
-    "id": "my id"
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "id": "my id"
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $script->toArray());
         $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_language_parameter()
     {
         $script = new Script();
@@ -62,18 +68,20 @@ JSON;
             'lang'   => 'painless',
         ];
 
-        $expectedJson = <<<JSON
-{
-    "source": "script source",
-    "lang": "painless"
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "source": "script source",
+                "lang": "painless"
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $script->toArray());
         $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function it_builds_the_query_with_the_parameters_parameter()
     {
         $script = new Script();
@@ -89,20 +97,22 @@ JSON;
             ],
         ];
 
-        $expectedJson = <<<JSON
-{
-    "source": "script source",
-    "params": {
-        "multiplier": 2
-    }
-}
-JSON;
+        $expectedJson = <<<'JSON'
+            {
+                "source": "script source",
+                "params": {
+                    "multiplier": 2
+                }
+            }
+            JSON;
 
         $this->assertSame($expectedArray, $script->toArray());
         $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_the_source_or_id_are_not_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -113,7 +123,9 @@ JSON;
         $script->toArray();
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_if_both_source_ad_id_are_set_when_building_the_query()
     {
         $this->expectException(InvalidArgumentException::class);
