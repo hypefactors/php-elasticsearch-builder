@@ -30,7 +30,7 @@ class SortTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $sort->toArray());
+        $this->assertEquals($expectedArray, $sort->toArray());
         $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
     }
 

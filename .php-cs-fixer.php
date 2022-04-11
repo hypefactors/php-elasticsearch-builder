@@ -4,6 +4,7 @@ use Symfony\Component\Finder\SplFileInfo;
 
 // Directories to not scan
 $excludeDirs = [
+    'tests/',
     'vendor/',
 ];
 

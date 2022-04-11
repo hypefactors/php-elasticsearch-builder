@@ -42,7 +42,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -76,7 +76,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -108,7 +108,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -142,7 +142,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -174,7 +174,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -208,7 +208,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -240,7 +240,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -274,7 +274,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -306,7 +306,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -332,7 +332,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -361,7 +361,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -396,7 +396,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -428,7 +428,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -462,7 +462,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -494,7 +494,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -528,7 +528,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -559,7 +559,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -595,7 +595,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -624,7 +624,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -658,7 +658,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -728,7 +728,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -840,7 +840,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -874,7 +874,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -903,7 +903,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -937,7 +937,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -966,7 +966,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1000,7 +1000,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1032,7 +1032,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1065,7 +1065,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1133,7 +1133,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1200,7 +1200,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1234,7 +1234,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1263,7 +1263,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1295,7 +1295,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 
@@ -1329,7 +1329,7 @@ class HighlightTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $highlight->toArray());
+        $this->assertEquals($expectedArray, $highlight->toArray());
         $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
     }
 

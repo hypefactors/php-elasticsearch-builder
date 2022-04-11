@@ -278,7 +278,7 @@ class TopHitsAggregationTest extends TestCase
             }
             JSON;
 
-        $this->assertSame($expectedArray, $aggregation->toArray());
+        $this->assertEquals($expectedArray, $aggregation->toArray());
         $this->assertSame($expectedJson, $aggregation->toJson(JSON_PRETTY_PRINT));
     }
 

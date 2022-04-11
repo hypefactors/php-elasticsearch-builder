@@ -158,7 +158,7 @@ class ElasticBuilderTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expected, $builder->toArray());
+        $this->assertEquals($expected, $builder->toArray());
     }
 
     /**
