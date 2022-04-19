@@ -51,6 +51,6 @@
     "scripts": {
         "cs": "./vendor/bin/php-cs-fixer fix --verbose --ansi --show-progress=dots",
         "cs:ci": "./vendor/bin/php-cs-fixer fix --verbose --ansi --show-progress=dots --diff --dry-run",
-        "test": "./vendor/bin/phpunit --verbose --colors=always"
+        "test": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --verbose --colors=always"
     }
 }
