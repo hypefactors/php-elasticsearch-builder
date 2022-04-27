@@ -5,11 +5,11 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Aggregation\Metrics;
 
 use Hypefactors\ElasticBuilder\Aggregation\Metrics\TopHitsAggregation;
+use Hypefactors\ElasticBuilder\Core\Sort;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use Hypefactors\ElasticBuilder\Script\Script;
-use Hypefactors\ElasticBuilder\Sort\Sort;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;

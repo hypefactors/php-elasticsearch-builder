@@ -5,12 +5,12 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests;
 
 use Hypefactors\ElasticBuilder\Aggregation\Bucketing\TermsAggregation;
+use Hypefactors\ElasticBuilder\Core\Sort;
 use Hypefactors\ElasticBuilder\ElasticBuilder;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use Hypefactors\ElasticBuilder\Script\Script;
-use Hypefactors\ElasticBuilder\Sort\Sort;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

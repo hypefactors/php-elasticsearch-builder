@@ -6,11 +6,11 @@ namespace Hypefactors\ElasticBuilder;
 
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
 use Hypefactors\ElasticBuilder\Core\InnerHits;
+use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
 use InvalidArgumentException;
 
 /**
@@ -262,7 +262,7 @@ class ElasticBuilder
     /**
      * Allows you to add a sort for a specific field.
      *
-     * @param \Hypefactors\ElasticBuilder\Sort\SortInterface $sort
+     * @param \Hypefactors\ElasticBuilder\Core\SortInterface $sort
      *
      * @return $this
      */

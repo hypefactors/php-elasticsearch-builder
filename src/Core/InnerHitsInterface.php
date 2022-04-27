@@ -4,9 +4,9 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
+use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
 
 interface InnerHitsInterface extends ArrayableInterface, JsonableInterface
 {
@@ -35,7 +35,7 @@ interface InnerHitsInterface extends ArrayableInterface, JsonableInterface
     /**
      * How the inner hits should be sorted per inner_hits.
      *
-     * @param \Hypefactors\ElasticBuilder\Sort\SortInterface $sort
+     * @param \Hypefactors\ElasticBuilder\Core\SortInterface $sort
      *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html
      */
