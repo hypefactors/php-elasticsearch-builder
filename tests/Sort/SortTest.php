@@ -246,6 +246,18 @@ class SortTest extends TestCase
     /**
      * @test
      */
+    public function an_exception_will_be_thrown_when_generating_the_body_without_a_field()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The "field" is required!');
+
+        $sort = new Sort();
+        $sort->toArray();
+    }
+
+    /**
+     * @test
+     */
     public function an_exception_will_be_thrown_when_setting_an_invalid_order()
     {
         $this->expectException(InvalidArgumentException::class);
