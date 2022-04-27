@@ -13,14 +13,9 @@ final class Script implements ScriptInterface
 {
     /**
      * The parameters that will be used when building the Script response.
-     *
-     * @var array
      */
-    protected $parameters = [];
+    private array $parameters = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function id(string $id): ScriptInterface
     {
         $this->parameters['id'] = $id;
@@ -28,9 +23,6 @@ final class Script implements ScriptInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function source(string $source): ScriptInterface
     {
         $this->parameters['source'] = $source;
@@ -38,9 +30,6 @@ final class Script implements ScriptInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function language(string $language): ScriptInterface
     {
         $this->parameters['lang'] = $language;
@@ -48,9 +37,6 @@ final class Script implements ScriptInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function parameters(array $parameters): ScriptInterface
     {
         $this->parameters['params'] = $parameters;
@@ -58,9 +44,6 @@ final class Script implements ScriptInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         if (! isset($this->parameters['source']) && ! isset($this->parameters['id'])) {
@@ -74,9 +57,6 @@ final class Script implements ScriptInterface
         return Util::arrayWrap($this->parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toJson(int $options = 0): string
     {
         return json_encode($this->toArray(), $options);
