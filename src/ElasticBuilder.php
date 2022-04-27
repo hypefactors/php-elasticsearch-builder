@@ -6,11 +6,11 @@ namespace Hypefactors\ElasticBuilder;
 
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
 use Hypefactors\ElasticBuilder\Core\InnerHits;
+use Hypefactors\ElasticBuilder\Core\ScriptInterface;
 use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
-use Hypefactors\ElasticBuilder\Script\ScriptInterface;
 use InvalidArgumentException;
 
 /**
@@ -162,8 +162,8 @@ class ElasticBuilder
     /**
      * Allows to return a script evaluation (based on different fields) for each hit.
      *
-     * @param string                                             $fieldName
-     * @param \Hypefactors\ElasticBuilder\Script\ScriptInterface $script
+     * @param string                                           $fieldName
+     * @param \Hypefactors\ElasticBuilder\Core\ScriptInterface $script
      *
      * @return $this
      */

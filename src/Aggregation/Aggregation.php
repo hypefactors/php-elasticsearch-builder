@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Aggregation;
 
-use Hypefactors\ElasticBuilder\Script\ScriptInterface;
+use Hypefactors\ElasticBuilder\Core\ScriptInterface;
 use InvalidArgumentException;
 
 abstract class Aggregation implements AggregationInterface

@@ -2,9 +2,8 @@
 
 declare(strict_types = 1);
 
-namespace Hypefactors\ElasticBuilder\Script;
+namespace Hypefactors\ElasticBuilder\Core;
 
-use Hypefactors\ElasticBuilder\Core\Util;
 use InvalidArgumentException;
 
 /**

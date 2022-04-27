@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-use Hypefactors\ElasticBuilder\Core\Util;
-use Hypefactors\ElasticBuilder\Script\ScriptInterface;
 use InvalidArgumentException;
 use stdClass;
 

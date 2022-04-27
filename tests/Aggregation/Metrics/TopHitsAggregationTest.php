@@ -9,7 +9,7 @@ use Hypefactors\ElasticBuilder\Core\Sort;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
-use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Core\Script;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;

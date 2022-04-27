@@ -4,9 +4,7 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
-use Hypefactors\ElasticBuilder\Script\ScriptInterface;
 
 interface InnerHitsInterface extends ArrayableInterface, JsonableInterface
 {
