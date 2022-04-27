@@ -4,10 +4,6 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-use Hypefactors\ElasticBuilder\Core\ArrayableInterface;
-use Hypefactors\ElasticBuilder\Core\JsonableInterface;
-use Hypefactors\ElasticBuilder\Script\ScriptInterface;
-
 interface SortInterface extends ArrayableInterface, JsonableInterface
 {
     /**

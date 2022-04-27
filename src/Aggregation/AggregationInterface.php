@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Aggregation;
 
-use Hypefactors\ElasticBuilder\Script\ScriptInterface;
+use Hypefactors\ElasticBuilder\Core\ScriptInterface;
 
 interface AggregationInterface
 {
@@ -42,7 +42,7 @@ interface AggregationInterface
     /**
      * Sets the Script parameter for the Aggregation.
      *
-     * @param \Hypefactors\ElasticBuilder\Script\ScriptInterface $script
+     * @param \Hypefactors\ElasticBuilder\Core\ScriptInterface $script
      *
      * @return \Hypefactors\ElasticBuilder\Aggregation\AggregationInterface
      */

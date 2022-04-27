@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Core;
 
 use Hypefactors\ElasticBuilder\Core\Sort;
-use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Core\Script;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;

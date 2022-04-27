@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Aggregation\Bucketing;
 
 use Hypefactors\ElasticBuilder\Aggregation\Bucketing\TermsAggregation;
-use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Core\Script;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
