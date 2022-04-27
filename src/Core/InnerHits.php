@@ -4,140 +4,102 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
+use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
+use Hypefactors\ElasticBuilder\Script\Script;
+use Hypefactors\ElasticBuilder\Script\ScriptInterface;
+use Hypefactors\ElasticBuilder\Sort\Sort;
 use Hypefactors\ElasticBuilder\Sort\SortInterface;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-body.html#request-body-search-inner-hits
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/inner-hits.html
  */
-final class InnerHits
+final class InnerHits implements InnerHitsInterface
 {
-    /**
-     * The body response.
-     *
-     * @var array
-     */
-    protected $body = [];
+    private array $body = [];
 
-    /**
-     * The offset from where the first hit to fetch for each
-     * inner_hits in the returned regular search hits.
-     *
-     * @param int|string $from
-     *
-     * @return $this
-     */
-    public function from($from): self
+    public function from(int | string $from): InnerHitsInterface
     {
         $this->body['from'] = $from;
 
         return $this;
     }
 
-    /**
-     * The name to be used for the particular inner hit definition in the response.
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function name(string $name): self
-    {
-        $this->body['name'] = $name;
-
-        return $this;
-    }
-
-    /**
-     * The maximum number of hits to return per inner_hits.
-     *
-     * @param int|string $size
-     *
-     * @return $this
-     */
-    public function size($size): self
+    public function size(int | string $size): InnerHitsInterface
     {
         $this->body['size'] = $size;
 
         return $this;
     }
 
-    /**
-     * How the inner hits should be sorted per inner_hits.
-     *
-     * @param \Hypefactors\ElasticBuilder\Sort\SortInterface $sort
-     *
-     * @return $this
-     */
-    public function sort(SortInterface $sort): self
+    public function sort(callable | SortInterface $value): InnerHitsInterface
     {
-        if (! isset($this->body['sort'])) {
-            $this->body['sort'] = [];
+        if (is_callable($value)) {
+            $sort = new Sort();
+
+            $value($sort);
+
+            return $this->sort($sort);
         }
 
-        $this->body['sort'][] = $sort;
+        $this->body['sort'][] = $value;
 
         return $this;
     }
 
-    public function sorts(array $sorts): self
+    public function name(string $name): InnerHitsInterface
     {
-        foreach ($sorts as $sort) {
-            $this->sort($sort);
+        $this->body['name'] = $name;
+
+        return $this;
+    }
+
+    public function highlight(callable | HighlightInterface $value): InnerHitsInterface
+    {
+        if (is_callable($value)) {
+            $highlight = new Highlight();
+
+            $value($highlight);
+
+            return $this->highlight($highlight);
         }
 
-        return $this;
-    }
-
-    public function highlight(HighlightInterface $highlight): self
-    {
-        $this->body['highlight'] = $highlight;
+        $this->body['highlight'] = $value;
 
         return $this;
     }
 
-    /**
-     * Enables explanation for each hit on how its score was computed.
-     *
-     * @param bool $status
-     *
-     * @return $this
-     */
-    public function explain(bool $status): self
+    public function explain(bool $status): InnerHitsInterface
     {
         $this->body['explain'] = $status;
 
         return $this;
     }
 
-    /**
-     * Allows to control how the _source field is returned with every hit.
-     *
-     * @param array|bool|string $source
-     *
-     * @return $this
-     */
-    public function source($source): self
+    public function source(array | bool | string $source): InnerHitsInterface
     {
         $this->body['_source'] = $source;
 
         return $this;
     }
 
-    /**
-     * Allows to return the doc value representation of a field for each hit.
-     *
-     * @param string      $field
-     * @param string|null $format
-     *
-     * @return $this
-     */
-    public function docValueField(string $field, ?string $format = null): self
+    public function script(callable | ScriptInterface $value): InnerHitsInterface
     {
-        if (! isset($this->body['docvalue_fields'])) {
-            $this->body['docvalue_fields'] = [];
+        if (is_callable($value)) {
+            $script = new Script();
+
+            $value($script);
+
+            return $this->script($script);
         }
 
+        $this->body['script_fields'][] = $value;
+
+        return $this;
+    }
+
+    public function docValueField(string $field, string | null $format = null): InnerHitsInterface
+    {
         if (! $format) {
             $body = $field;
         } else {
@@ -152,27 +114,20 @@ final class InnerHits
         return $this;
     }
 
-    /**
-     * Returns a version for each search hit.
-     *
-     * @param bool $status
-     *
-     * @return $this
-     */
-    public function version(bool $status): self
+    public function version(bool $status): InnerHitsInterface
     {
         $this->body['version'] = $status;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @return array
-     */
     public function toArray(): array
     {
         return Util::recursivetoArray($this->body);
+    }
+
+    public function toJson(int $options = 0): string
+    {
+        return json_encode($this->toArray(), $options);
     }
 }
