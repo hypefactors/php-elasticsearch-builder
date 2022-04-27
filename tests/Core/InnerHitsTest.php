@@ -5,12 +5,12 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Core;
 
 use Hypefactors\ElasticBuilder\Core\InnerHits;
+use Hypefactors\ElasticBuilder\Core\Sort;
+use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use Hypefactors\ElasticBuilder\Script\Script;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
-use Hypefactors\ElasticBuilder\Sort\Sort;
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

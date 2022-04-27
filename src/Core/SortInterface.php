@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Hypefactors\ElasticBuilder\Sort;
+namespace Hypefactors\ElasticBuilder\Core;
 
 use Hypefactors\ElasticBuilder\Core\ArrayableInterface;
 use Hypefactors\ElasticBuilder\Core\JsonableInterface;

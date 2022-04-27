@@ -4,12 +4,12 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
+use Hypefactors\ElasticBuilder\Core\Sort;
+use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Highlight\Highlight;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use Hypefactors\ElasticBuilder\Script\Script;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
-use Hypefactors\ElasticBuilder\Sort\Sort;
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/inner-hits.html

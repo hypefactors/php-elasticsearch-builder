@@ -5,10 +5,10 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Aggregation\Metrics;
 
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
+use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
-use Hypefactors\ElasticBuilder\Sort\SortInterface;
 use InvalidArgumentException;
 
 /**
@@ -47,7 +47,7 @@ class TopHitsAggregation extends Aggregation
     /**
      * Allows you to add a sort for a specific field.
      *
-     * @param \Hypefactors\ElasticBuilder\Sort\SortInterface $sort
+     * @param \Hypefactors\ElasticBuilder\Core\SortInterface $sort
      *
      * @return $this
      */
