@@ -4,79 +4,69 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Sort;
 
-use Hypefactors\ElasticBuilder\Core\GeoPoint;
 use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Script\ScriptInterface;
 use InvalidArgumentException;
 use stdClass;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-body.html#request-body-search-sort
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html
  */
 final class Sort implements SortInterface
 {
     /**
      * The field to be sorted.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
     /**
      * The sorting options to be applied.
-     *
-     * @var array
      */
-    protected $options = [];
-
-    // protected $geoPoint;
+    private array $options = [];
 
     /**
      * The Script instance to be used for a Script Based Sorting.
-     *
-     * @var \Hypefactors\ElasticBuilder\Script\ScriptInterface
      */
-    protected $script;
+    private ScriptInterface | null $script = null;
 
     /**
-     * The list of valid orders.
-     *
-     * @var array
+     * The list of valid sort orders.
      */
-    public const VALID_ORDERS = ['asc', 'desc'];
+    public const VALID_ORDERS = [
+        'asc',
+        'desc',
+    ];
 
     /**
      * The list of valid modes.
-     *
-     * @var array
      */
-    public const VALID_MODES = ['min', 'max', 'sum', 'avg', 'median'];
+    public const VALID_MODES = [
+        'min',
+        'max',
+        'sum',
+        'avg',
+        'median',
+    ];
 
     /**
      * The list of valid numeric types.
-     *
-     * @var array
      */
-    public const VALID_NUMERIC_TYPES = ['double', 'long', 'date', 'date_nanos'];
+    public const VALID_NUMERIC_TYPES = [
+        'double',
+        'long',
+        'date',
+        'date_nanos',
+    ];
 
-    /**
-     * Constructor.
-     *
-     * @param string|null $field
-     * @param string|null $order
-     *
-     * @return void
-     */
-    public function __construct(?string $field = null, ?string $order = null)
-    {
+    public function __construct(
+        string | null $field = null,
+        string | null $order = null,
+    ) {
         $field && $this->field($field);
 
         $order && $this->order($order);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function field(string $field): SortInterface
     {
         $this->field = $field;
@@ -84,19 +74,6 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    // /**
-    //  * {@inheritdoc}
-    //  */
-    // public function geoDistance(GeoPoint $geoPoint): SortInterface
-    // {
-    //     $this->geoPoint = $geoPoint;
-
-    //     return $this;
-    // }
-
-    /**
-     * {@inheritdoc}
-     */
     public function script(ScriptInterface $script): SortInterface
     {
         $this->script = $script;
@@ -104,9 +81,6 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function missing($value): SortInterface
     {
         $this->options['missing'] = $value;
@@ -114,9 +88,6 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function mode(string $mode): SortInterface
     {
         $modeLower = strtolower($mode);
@@ -130,9 +101,6 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function numericType(string $numericType): SortInterface
     {
         $numericTypeLower = strtolower($numericType);
@@ -146,9 +114,6 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function order(string $order): SortInterface
     {
         $orderLower = strtolower($order);
@@ -162,9 +127,6 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unmappedType(string $type): SortInterface
     {
         $this->options['unmapped_type'] = $type;
@@ -172,25 +134,18 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
-        // if ($this->geoPoint) {
-        //     return [
-        //         '_geo_distance' => [
-        //             $this->field => array_merge($this->geoPoint->toArray(), $this->options),
-        //         ],
-        //     ];
-        // }
-
         if ($this->script) {
             return [
                 '_script' => array_merge($this->options, [
                     'script' => $this->script->toArray(),
                 ]),
             ];
+        }
+
+        if ($this->field === null) {
+            throw new InvalidArgumentException('The "field" is required!');
         }
 
         if (empty($this->options)) {
@@ -210,9 +165,6 @@ final class Sort implements SortInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toJson(int $options = 0): string
     {
         return json_encode($this->toArray(), $options);
