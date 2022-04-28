@@ -6,7 +6,7 @@ namespace Hypefactors\ElasticBuilder\Tests\Aggregation\Metrics;
 
 use Hypefactors\ElasticBuilder\Aggregation\Metrics\TopHitsAggregation;
 use Hypefactors\ElasticBuilder\Core\Sort;
-use Hypefactors\ElasticBuilder\Highlight\Highlight;
+use Hypefactors\ElasticBuilder\Core\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use Hypefactors\ElasticBuilder\Core\Script;

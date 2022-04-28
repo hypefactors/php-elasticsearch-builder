@@ -5,10 +5,11 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Aggregation\Metrics;
 
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
+use Hypefactors\ElasticBuilder\Core\Highlight;
+use Hypefactors\ElasticBuilder\Core\HighlightInterface;
 use Hypefactors\ElasticBuilder\Core\ScriptInterface;
 use Hypefactors\ElasticBuilder\Core\SortInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
-use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
 use InvalidArgumentException;
 
 /**
@@ -123,7 +124,7 @@ class TopHitsAggregation extends Aggregation
     /**
      * Allows to highlight search results on one or more fields.
      *
-     * @param \Hypefactors\ElasticBuilder\Highlight\HighlightInterface $highlight
+     * @param \Hypefactors\ElasticBuilder\Core\HighlightInterface $highlight
      *
      * @return $this
      */
