@@ -380,7 +380,8 @@ class TermsAggregationTest extends TestCase
         $aggregation3->name('colors_2');
         $aggregation3->field('color');
 
-        $aggregation1->aggregations([$aggregation2, $aggregation3]);
+        $aggregation1->aggregation($aggregation2);
+        $aggregation1->aggregation($aggregation3);
 
         $expectedArray = [
             'genres' => [
