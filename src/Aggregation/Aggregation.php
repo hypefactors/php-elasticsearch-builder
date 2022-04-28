@@ -7,39 +7,31 @@ namespace Hypefactors\ElasticBuilder\Aggregation;
 use Hypefactors\ElasticBuilder\Core\ScriptInterface;
 use InvalidArgumentException;
 
+/**
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html
+ */
 abstract class Aggregation implements AggregationInterface
 {
     /**
      * The Aggregation name.
-     *
-     * @var string
      */
-    protected $name;
+    protected string | null $name = null;
 
     /**
      * The Aggregation body.
-     *
-     * @var array
      */
-    protected $body = [];
+    protected array $body = [];
 
     /**
      * The Aggregation Metadata.
-     *
-     * @var array
      */
-    protected $meta = [];
+    protected array $meta = [];
 
     /**
      * The Nested Aggregations of this Aggregation.
-     *
-     * @var array
      */
-    protected $nestedAggregations = [];
+    protected array $nestedAggregations = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function name(string $name): AggregationInterface
     {
         $this->name = $name;
@@ -47,9 +39,6 @@ abstract class Aggregation implements AggregationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function field(string $field): AggregationInterface
     {
         $this->body['field'] = $field;
@@ -57,9 +46,6 @@ abstract class Aggregation implements AggregationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function aggregation(AggregationInterface $aggregation): AggregationInterface
     {
         $this->nestedAggregations[] = $aggregation;
@@ -67,21 +53,6 @@ abstract class Aggregation implements AggregationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function aggregations(array $aggregations): AggregationInterface
-    {
-        foreach ($aggregations as $aggregation) {
-            $this->aggregation($aggregation);
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function meta(array $meta): AggregationInterface
     {
         $this->meta = $meta;
@@ -89,9 +60,6 @@ abstract class Aggregation implements AggregationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function script(ScriptInterface $script): AggregationInterface
     {
         $this->body['script'] = $script;
@@ -99,9 +67,6 @@ abstract class Aggregation implements AggregationInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         if (! $this->name) {
@@ -129,9 +94,6 @@ abstract class Aggregation implements AggregationInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toJson(int $options = 0): string
     {
         return json_encode($this->toArray(), $options);

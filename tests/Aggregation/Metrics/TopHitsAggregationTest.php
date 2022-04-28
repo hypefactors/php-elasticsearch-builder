@@ -237,12 +237,12 @@ class TopHitsAggregationTest extends TestCase
                     'highlight' => [
                         'highlight_query' => [
                             'bool' => [
+                                'minimum_should_match' => 0,
                                 'must' => [
                                     'term' => [
                                         'user' => 'john',
                                     ],
                                 ],
-                                'minimum_should_match' => 0,
                             ],
                         ],
                         'fields' => [
@@ -462,7 +462,8 @@ class TopHitsAggregationTest extends TestCase
         $aggregation3->name('colors_2');
         $aggregation3->field('color');
 
-        $aggregation1->aggregations([$aggregation2, $aggregation3]);
+        $aggregation1->aggregation($aggregation2);
+        $aggregation1->aggregation($aggregation3);
 
         $expectedArray = [
             'genres' => [

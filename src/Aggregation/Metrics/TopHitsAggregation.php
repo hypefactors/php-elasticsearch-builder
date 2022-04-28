@@ -124,13 +124,19 @@ class TopHitsAggregation extends Aggregation
     /**
      * Allows to highlight search results on one or more fields.
      *
-     * @param \Hypefactors\ElasticBuilder\Core\HighlightInterface $highlight
+     * @param callable|\Hypefactors\ElasticBuilder\Core\HighlightInterface $value
      *
      * @return $this
      */
-    public function highlight(HighlightInterface $highlight): self
+    public function highlight(callable | HighlightInterface $value): self
     {
-        $this->body['highlight'] = $highlight;
+        if (is_callable($value)) {
+            $highlight = new Highlight();
+
+            $value($highlight);
+        } else {
+            $this->body['highlight'] = $value;
+        }
 
         return $this;
     }
@@ -185,7 +191,7 @@ class TopHitsAggregation extends Aggregation
      *
      * @return $this
      */
-    public function docValueField(string $field, ?string $format = null): self
+    public function docValueField(string $field, string | null $format = null): self
     {
         if (! isset($this->body['docvalue_fields'])) {
             $this->body['docvalue_fields'] = [];

@@ -5,25 +5,22 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Aggregation\Metrics;
 
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
+use Hypefactors\ElasticBuilder\Aggregation\AggregationInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
 use InvalidArgumentException;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html#search-aggregations-metrics-cardinality-aggregation.html
  */
-class CardinalityAggregation extends Aggregation
+final class CardinalityAggregation extends Aggregation
 {
     /**
      * The precision_threshold options allows to trade memory for accuracy, and defines
      * a unique count below which counts are expected to be close to accurate.
      *
-     * @param int $precisionThreshold
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return $this
      */
-    public function precision(int $precisionThreshold): self
+    public function precision(int $precisionThreshold): AggregationInterface
     {
         if ($precisionThreshold > 40000) {
             throw new InvalidArgumentException('The maximum precision threslhold supported value is 40000!');
@@ -37,7 +34,7 @@ class CardinalityAggregation extends Aggregation
     /**
      * Returns the Aggregation body.
      *
-     * @return array
+     * @throws \InvalidArgumentException
      */
     public function getBody(): array
     {

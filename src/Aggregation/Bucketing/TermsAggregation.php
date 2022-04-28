@@ -11,7 +11,7 @@ use InvalidArgumentException;
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html
  */
-class TermsAggregation extends Aggregation
+final class TermsAggregation extends Aggregation
 {
     public function collectMode(string $mode): self
     {
@@ -110,6 +110,11 @@ class TermsAggregation extends Aggregation
         return $this;
     }
 
+    /**
+     * Returns the Aggregation body.
+     *
+     * @throws \InvalidArgumentException
+     */
     public function getBody(): array
     {
         if (! isset($this->body['field'])) {

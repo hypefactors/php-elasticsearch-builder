@@ -11,8 +11,13 @@ use InvalidArgumentException;
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html
  */
-class SumAggregation extends Aggregation
+final class SumAggregation extends Aggregation
 {
+    /**
+     * Returns the Aggregation body.
+     *
+     * @throws \InvalidArgumentException
+     */
     public function getBody(): array
     {
         if (! isset($this->body['field'])) {
