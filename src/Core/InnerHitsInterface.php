@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
-
 interface InnerHitsInterface extends ArrayableInterface, JsonableInterface
 {
     /**

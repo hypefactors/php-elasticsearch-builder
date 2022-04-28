@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace Hypefactors\ElasticBuilder\Tests\Highlight;
+namespace Hypefactors\ElasticBuilder\Tests\Core;
 
-use Hypefactors\ElasticBuilder\Highlight\Highlight;
+use Hypefactors\ElasticBuilder\Core\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\ExistsQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;

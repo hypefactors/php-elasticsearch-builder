@@ -4,9 +4,6 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-use Hypefactors\ElasticBuilder\Highlight\Highlight;
-use Hypefactors\ElasticBuilder\Highlight\HighlightInterface;
-
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/inner-hits.html
  */

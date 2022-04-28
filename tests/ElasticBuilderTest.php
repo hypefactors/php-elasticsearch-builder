@@ -8,7 +8,7 @@ use Hypefactors\ElasticBuilder\Aggregation\Bucketing\TermsAggregation;
 use Hypefactors\ElasticBuilder\Core\Script;
 use Hypefactors\ElasticBuilder\Core\Sort;
 use Hypefactors\ElasticBuilder\ElasticBuilder;
-use Hypefactors\ElasticBuilder\Highlight\Highlight;
+use Hypefactors\ElasticBuilder\Core\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
 use PHPUnit\Framework\TestCase;
