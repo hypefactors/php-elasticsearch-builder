@@ -31,11 +31,9 @@ interface InnerHitsInterface extends ArrayableInterface, JsonableInterface
     /**
      * How the inner hits should be sorted per inner_hits.
      *
-     * @param \Hypefactors\ElasticBuilder\Core\SortInterface $sort
-     *
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html
      */
-    public function sort(SortInterface $sort): InnerHitsInterface;
+    public function sort(callable | SortInterface $sort): InnerHitsInterface;
 
     /**
      * ...
