@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace Hypefactors\ElasticBuilder\Tests\Query\FullText\IntervalQueryRule;
+namespace Hypefactors\ElasticBuilder\Tests\Query\FullText\IntervalQueryRule\FilterRule;
 
 use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\FilterRule\AfterRule;
 use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\MatchRule;
 use PHPUnit\Framework\TestCase;
 
-class NotOverlappingTest extends TestCase
+class AfterRuleTest extends TestCase
 {
     /**
      * @test
