@@ -8,9 +8,9 @@ use InvalidArgumentException;
 use stdClass;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/sort-search-results.html
  */
-final class Sort implements SortInterface
+class Sort implements SortInterface
 {
     /**
      * The field to be sorted.
@@ -76,6 +76,10 @@ final class Sort implements SortInterface
     {
         $this->script = $script;
 
+        // TODO: Determine if this should be dynamic, Elasticsearch
+        // documentation is extremely weak for this..
+        $this->options['type'] = 'number';
+
         return $this;
     }
 
@@ -132,12 +136,17 @@ final class Sort implements SortInterface
         return $this;
     }
 
-    public function toArray(): array
+    public function isEmpty(): bool
+    {
+        return empty($this->build());
+    }
+
+    public function build(): array
     {
         if ($this->script) {
             return [
                 '_script' => array_merge($this->options, [
-                    'script' => $this->script->toArray(),
+                    'script' => $this->script->build(),
                 ]),
             ];
         }
@@ -161,10 +170,5 @@ final class Sort implements SortInterface
         return [
             $this->field => Util::recursivetoArray($this->options),
         ];
-    }
-
-    public function toJson(int $options = 0): string
-    {
-        return json_encode($this->toArray(), $options);
     }
 }

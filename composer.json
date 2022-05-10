@@ -1,5 +1,5 @@
 {
-    "name": "hypefactors/php-elasticsearch-builder",
+    "name": "hypefactors/elasticsearch-builder",
     "description": "A PHP implementation of the Elasticsearch Query DSL.",
     "keywords": [
         "php",

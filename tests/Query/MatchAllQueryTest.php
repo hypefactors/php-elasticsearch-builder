@@ -5,7 +5,9 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Query;
 
 use Hypefactors\ElasticBuilder\Query\MatchAllQuery;
-use PHPUnit\Framework\TestCase;
+use Hypefactors\ElasticBuilder\QueryBuilderInterface;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 
 class MatchAllQueryTest extends TestCase
 {
@@ -14,20 +16,23 @@ class MatchAllQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new MatchAllQuery();
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query(function (QueryBuilderInterface $queryBuilder) {
+            $matchAllQuery = new MatchAllQuery();
 
-        $expectedArray = [
-            'match_all' => [],
-        ];
+            $queryBuilder->matchAll($matchAllQuery);
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_all": []
-            }
-            JSON;
+            $expected = [
+                'match_all' => [],
+            ];
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+            $this->assertFalse($matchAllQuery->isEmpty());
+            $this->assertSame($expected, $matchAllQuery->build());
+        });
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $this->assertArrayHasKey('took', $response);
     }
 
     /**
@@ -35,25 +40,26 @@ class MatchAllQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new MatchAllQuery();
-        $query->boost(1.5);
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query(function (QueryBuilderInterface $queryBuilder) {
+            $matchAllQuery = new MatchAllQuery();
+            $matchAllQuery->boost(1.5);
 
-        $expectedArray = [
-            'match_all' => [
-                'boost' => 1.5,
-            ],
-        ];
+            $queryBuilder->matchAll($matchAllQuery);
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_all": {
-                    "boost": 1.5
-                }
-            }
-            JSON;
+            $expected = [
+                'match_all' => [
+                    'boost' => 1.5,
+                ],
+            ];
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+            $this->assertFalse($matchAllQuery->isEmpty());
+            $this->assertSame($expected, $matchAllQuery->build());
+        });
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $this->assertArrayHasKey('took', $response);
     }
 
     /**
@@ -61,24 +67,25 @@ class MatchAllQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new MatchAllQuery();
-        $query->name('my-query-name');
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query(function (QueryBuilderInterface $queryBuilder) {
+            $matchAllQuery = new MatchAllQuery();
+            $matchAllQuery->name('my-query-name');
 
-        $expectedArray = [
-            'match_all' => [
-                '_name' => 'my-query-name',
-            ],
-        ];
+            $queryBuilder->matchAll($matchAllQuery);
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_all": {
-                    "_name": "my-query-name"
-                }
-            }
-            JSON;
+            $expected = [
+                'match_all' => [
+                    '_name' => 'my-query-name',
+                ],
+            ];
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+            $this->assertFalse($matchAllQuery->isEmpty());
+            $this->assertSame($expected, $matchAllQuery->build());
+        });
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $this->assertArrayHasKey('took', $response);
     }
 }

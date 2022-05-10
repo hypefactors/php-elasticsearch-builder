@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\Span;
 
-interface SpanQueryInterface
+use Hypefactors\ElasticBuilder\Query\QueryInterface;
+
+interface SpanQueryInterface extends QueryInterface
 {
 }

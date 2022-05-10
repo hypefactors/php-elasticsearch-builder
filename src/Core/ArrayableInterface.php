@@ -9,5 +9,10 @@ interface ArrayableInterface
     /**
      * Converts the object to an array.
      */
-    public function toArray(): array;
+    public function build(): array;
+
+    /**
+     * Determines if the query body is empty.
+     */
+    public function isEmpty(): bool;
 }

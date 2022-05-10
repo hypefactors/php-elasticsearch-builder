@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermsQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class TermsQueryTest extends TestCase
 {
@@ -15,28 +19,31 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_a_single_value()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->value('john');
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->value('john');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user' => ['john'],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "john"
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -44,31 +51,33 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_a_single_value_with_the_boost_factor_parameter()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->value('john');
-        $query->boost(1.5);
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->value('john');
+        $termsQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user'  => ['john'],
                 'boost' => 1.5,
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "john"
-                    ],
-                    "boost": 1.5
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -76,31 +85,33 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_a_single_value_with_name_parameter()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->value('john');
-        $query->name('my-query-name');
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->value('john');
+        $termsQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user'  => ['john'],
                 '_name' => 'my-query-name',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "john"
-                    ],
-                    "_name": "my-query-name"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -108,29 +119,31 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_multiple_values()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->values(['john', 'jane']);
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->values(['john', 'jane']);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user' => ['john', 'jane'],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "john",
-                        "jane"
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -138,32 +151,33 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_multiple_values_with_the_boost_factor_parameter()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->values(['john', 'jane']);
-        $query->boost(1.5);
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->values(['john', 'jane']);
+        $termsQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user'  => ['john', 'jane'],
                 'boost' => 1.5,
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "john",
-                        "jane"
-                    ],
-                    "boost": 1.5
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -171,32 +185,33 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_multiple_values_with_the_name_parameter()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->values(['john', 'jane']);
-        $query->name('my-query-name');
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->values(['john', 'jane']);
+        $termsQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user'  => ['john', 'jane'],
                 '_name' => 'my-query-name',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "john",
-                        "jane"
-                    ],
-                    "_name": "my-query-name"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -204,30 +219,32 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_multiple_values_and_removes_duplicated_values()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->values(['john', 'jane']);
-        $query->value('john');
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->values(['john', 'jane']);
+        $termsQuery->value('john');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user' => ['john', 'jane'],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "john",
-                        "jane"
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -235,128 +252,77 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_the_given_terms_lookup()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->termsLookup([
-            'index' => 'my_index',
-            'path'  => 'color',
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->termsLookup([
+            'id'    => 'ci-id',
+            'index' => 'ci-index',
+            'path'  => 'ci-path',
         ]);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user' => [
-                    'index' => 'my_index',
-                    'path'  => 'color',
+                    'id'    => 'ci-id',
+                    'index' => 'ci-index',
+                    'path'  => 'ci-path',
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": {
-                        "index": "my_index",
-                        "path": "color"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
      * @test
      */
-    public function it_builds_the_query_for_an_index_term_lookup()
+    public function it_builds_the_query_for_an_id_index_path_term_lookup()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->index('my_index');
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->id('ci-id');
+        $termsQuery->index('ci-index');
+        $termsQuery->path('ci-path');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user' => [
-                    'index' => 'my_index',
+                    'id'    => 'ci-id',
+                    'index' => 'ci-index',
+                    'path'  => 'ci-path',
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": {
-                        "index": "my_index"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_builds_the_query_for_an_id_term_lookup()
-    {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->id('2');
-
-        $expectedArray = [
-            'terms' => [
-                'user' => [
-                    'id' => '2',
-                ],
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": {
-                        "id": "2"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_builds_the_query_for_a_path_term_lookup()
-    {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->path('color');
-
-        $expectedArray = [
-            'terms' => [
-                'user' => [
-                    'path' => 'color',
-                ],
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": {
-                        "path": "color"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -364,30 +330,39 @@ class TermsQueryTest extends TestCase
      */
     public function it_builds_the_query_for_a_routing_term_lookup()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->routing('something');
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->id('ci-id');
+        $termsQuery->index('ci-index');
+        $termsQuery->path('ci-path');
+        $termsQuery->routing('ci-routing');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user' => [
-                    'routing' => 'something',
+                    'id'    => 'ci-id',
+                    'index' => 'ci-index',
+                    'path'  => 'ci-path',
+                    'routing' => 'ci-routing',
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": {
-                        "routing": "something"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -395,35 +370,36 @@ class TermsQueryTest extends TestCase
      */
     public function it_ensures_the_values_are_unique_and_without_weird_indexes()
     {
-        $query = new TermsQuery();
-        $query->field('user');
-        $query->values([
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
+        $termsQuery->values([
             0 => 'value1',
             1 => 'value2',
             2 => 'value2',
             3 => 'value3',
         ]);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termsQuery) {
+                $query->terms($termsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'terms' => [
                 'user' => ['value1', 'value2', 'value3'],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "terms": {
-                    "user": [
-                        "value1",
-                        "value2",
-                        "value3"
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termsQuery->isEmpty());
+        $this->assertSame($expected, $termsQuery->build());
     }
 
     /**
@@ -434,8 +410,8 @@ class TermsQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new TermsQuery();
-        $query->toArray();
+        $termsQuery = new TermsQuery();
+        $termsQuery->build();
     }
 
     /**
@@ -446,9 +422,9 @@ class TermsQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "values" are required!');
 
-        $query = new TermsQuery();
-        $query->field('user');
+        $termsQuery = new TermsQuery();
+        $termsQuery->field('user');
 
-        $query->toArray();
+        $termsQuery->build();
     }
 }

@@ -5,10 +5,9 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Aggregation;
 
 use Hypefactors\ElasticBuilder\Core\ArrayableInterface;
-use Hypefactors\ElasticBuilder\Core\JsonableInterface;
 use Hypefactors\ElasticBuilder\Core\ScriptInterface;
 
-interface AggregationInterface extends ArrayableInterface, JsonableInterface
+interface AggregationInterface extends ArrayableInterface
 {
     /**
      * Sets the Aggregation name.

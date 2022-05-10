@@ -4,73 +4,45 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\IdsQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class IdsQueryTest extends TestCase
 {
     /**
      * @test
      */
-    public function it_builds_the_query_without_type_parameter()
+    public function it_builds_the_query_with_values_parameter()
     {
-        $query = new IdsQuery();
-        $query->values(['1', '4', '10']);
+        $idsQuery = new IdsQuery();
+        $idsQuery->values(['1', '4', '10']);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($idsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($idsQuery) {
+                $query->ids($idsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'ids' => [
                 'values' => ['1', '4', '10'],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "ids": {
-                    "values": [
-                        "1",
-                        "4",
-                        "10"
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_builds_the_query_with_type_parameter()
-    {
-        $query = new IdsQuery();
-        $query->type('_doc');
-        $query->values(['1', '4', '10']);
-
-        $expectedArray = [
-            'ids' => [
-                'type'   => '_doc',
-                'values' => ['1', '4', '10'],
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "ids": {
-                    "type": "_doc",
-                    "values": [
-                        "1",
-                        "4",
-                        "10"
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($idsQuery->isEmpty());
+        $this->assertSame($expected, $idsQuery->build());
     }
 
     /**
@@ -78,32 +50,32 @@ class IdsQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new IdsQuery();
-        $query->values(['1', '4', '10']);
-        $query->boost(1.5);
+        $idsQuery = new IdsQuery();
+        $idsQuery->values(['1', '4', '10']);
+        $idsQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($idsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($idsQuery) {
+                $query->ids($idsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'ids' => [
                 'values' => ['1', '4', '10'],
                 'boost'  => 1.5,
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "ids": {
-                    "values": [
-                        "1",
-                        "4",
-                        "10"
-                    ],
-                    "boost": 1.5
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($idsQuery->isEmpty());
+        $this->assertSame($expected, $idsQuery->build());
     }
 
     /**
@@ -111,32 +83,32 @@ class IdsQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new IdsQuery();
-        $query->values(['1', '4', '10']);
-        $query->name('my-query-name');
+        $idsQuery = new IdsQuery();
+        $idsQuery->values(['1', '4', '10']);
+        $idsQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($idsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($idsQuery) {
+                $query->ids($idsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'ids' => [
                 'values' => ['1', '4', '10'],
                 '_name'  => 'my-query-name',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "ids": {
-                    "values": [
-                        "1",
-                        "4",
-                        "10"
-                    ],
-                    "_name": "my-query-name"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($idsQuery->isEmpty());
+        $this->assertSame($expected, $idsQuery->build());
     }
 
     /**
@@ -147,8 +119,8 @@ class IdsQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "values" are required!');
 
-        $query = new IdsQuery();
-        $query->toArray();
+        $idsQuery = new IdsQuery();
+        $idsQuery->build();
     }
 
     /**
@@ -159,9 +131,9 @@ class IdsQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "values" cannot be empty!');
 
-        $query = new IdsQuery();
-        $query->values([]);
+        $idsQuery = new IdsQuery();
+        $idsQuery->values([]);
 
-        $query->toArray();
+        $idsQuery->build();
     }
 }

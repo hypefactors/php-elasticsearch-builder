@@ -5,7 +5,9 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Query;
 
 use Hypefactors\ElasticBuilder\Query\MatchNoneQuery;
-use PHPUnit\Framework\TestCase;
+use Hypefactors\ElasticBuilder\QueryBuilderInterface;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 
 class MatchNoneQueryTest extends TestCase
 {
@@ -14,20 +16,23 @@ class MatchNoneQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new MatchNoneQuery();
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query(function (QueryBuilderInterface $queryBuilder) {
+            $matchNoneQuery = new MatchNoneQuery();
 
-        $expectedArray = [
-            'match_none' => [],
-        ];
+            $queryBuilder->matchNone($matchNoneQuery);
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_none": []
-            }
-            JSON;
+            $expected = [
+                'match_none' => [],
+            ];
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+            $this->assertFalse($matchNoneQuery->isEmpty());
+            $this->assertSame($expected, $matchNoneQuery->build());
+        });
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $this->assertArrayHasKey('took', $response);
     }
 
     /**
@@ -35,25 +40,26 @@ class MatchNoneQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new MatchNoneQuery();
-        $query->boost(1.5);
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query(function (QueryBuilderInterface $queryBuilder) {
+            $matchNoneQuery = new MatchNoneQuery();
+            $matchNoneQuery->boost(1.5);
 
-        $expectedArray = [
-            'match_none' => [
-                'boost' => 1.5,
-            ],
-        ];
+            $queryBuilder->matchNone($matchNoneQuery);
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_none": {
-                    "boost": 1.5
-                }
-            }
-            JSON;
+            $expected = [
+                'match_none' => [
+                    'boost' => 1.5,
+                ],
+            ];
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+            $this->assertFalse($matchNoneQuery->isEmpty());
+            $this->assertSame($expected, $matchNoneQuery->build());
+        });
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $this->assertArrayHasKey('took', $response);
     }
 
     /**
@@ -61,24 +67,25 @@ class MatchNoneQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new MatchNoneQuery();
-        $query->name('my-query-name');
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query(function (QueryBuilderInterface $queryBuilder) {
+            $matchNoneQuery = new MatchNoneQuery();
+            $matchNoneQuery->name('my-query-name');
 
-        $expectedArray = [
-            'match_none' => [
-                '_name' => 'my-query-name',
-            ],
-        ];
+            $queryBuilder->matchNone($matchNoneQuery);
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_none": {
-                    "_name": "my-query-name"
-                }
-            }
-            JSON;
+            $expected = [
+                'match_none' => [
+                    '_name' => 'my-query-name',
+                ],
+            ];
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+            $this->assertFalse($matchNoneQuery->isEmpty());
+            $this->assertSame($expected, $matchNoneQuery->build());
+        });
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $this->assertArrayHasKey('took', $response);
     }
 }

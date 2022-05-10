@@ -4,10 +4,11 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Core;
 
-use Hypefactors\ElasticBuilder\Core\Sort;
 use Hypefactors\ElasticBuilder\Core\Script;
+use Hypefactors\ElasticBuilder\Core\Sort;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 class SortTest extends TestCase
@@ -18,20 +19,20 @@ class SortTest extends TestCase
     public function it_can_set_the_field_without_order()
     {
         $sort = new Sort();
-        $sort->field('my-field');
+        $sort->field('name');
 
-        $expectedArray = [
-            'my-field' => new stdClass(),
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'name' => new stdClass(),
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "my-field": {}
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertEquals($expected, $sort->build());
     }
 
     /**
@@ -40,21 +41,21 @@ class SortTest extends TestCase
     public function it_can_set_the_order()
     {
         $sort = new Sort();
-        $sort->field('my-field');
+        $sort->field('name');
         $sort->order('desc');
 
-        $expectedArray = [
-            'my-field' => 'desc',
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'name' => 'desc',
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "my-field": "desc"
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertSame($expected, $sort->build());
     }
 
     /**
@@ -63,25 +64,23 @@ class SortTest extends TestCase
     public function it_can_set_the_missing()
     {
         $sort = new Sort();
-        $sort->field('my-field');
+        $sort->field('name');
         $sort->missing('_last');
 
-        $expectedArray = [
-            'my-field' => [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'name' => [
                 'missing' => '_last',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "my-field": {
-                    "missing": "_last"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertSame($expected, $sort->build());
     }
 
     /**
@@ -90,25 +89,23 @@ class SortTest extends TestCase
     public function it_can_set_the_sorting_mode()
     {
         $sort = new Sort();
-        $sort->field('my-field');
+        $sort->field('age');
         $sort->mode('avg');
 
-        $expectedArray = [
-            'my-field' => [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'age' => [
                 'mode' => 'avg',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "my-field": {
-                    "mode": "avg"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertSame($expected, $sort->build());
     }
 
     /**
@@ -117,28 +114,25 @@ class SortTest extends TestCase
     public function it_can_set_the_sorting_mode_with_the_order()
     {
         $sort = new Sort();
-        $sort->field('my-field');
+        $sort->field('age');
         $sort->order('desc');
         $sort->mode('avg');
 
-        $expectedArray = [
-            'my-field' => [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'age' => [
                 'order' => 'desc',
                 'mode'  => 'avg',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "my-field": {
-                    "order": "desc",
-                    "mode": "avg"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertSame($expected, $sort->build());
     }
 
     /**
@@ -147,25 +141,23 @@ class SortTest extends TestCase
     public function it_can_set_the_sorting_numeric_type()
     {
         $sort = new Sort();
-        $sort->field('my-field');
+        $sort->field('age');
         $sort->numericType('long');
 
-        $expectedArray = [
-            'my-field' => [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'age' => [
                 'numeric_type' => 'long',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "my-field": {
-                    "numeric_type": "long"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertSame($expected, $sort->build());
     }
 
     /**
@@ -174,25 +166,24 @@ class SortTest extends TestCase
     public function it_can_set_the_sorting_unmapped_type()
     {
         $sort = new Sort();
-        $sort->field('my-field');
+        $sort->field('name');
         $sort->unmappedType('long');
 
-        $expectedArray = [
-            'my-field' => [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'name' => [
                 'unmapped_type' => 'long',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "my-field": {
-                    "unmapped_type": "long"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertSame($expected, $sort->build());
     }
 
     /**
@@ -202,7 +193,7 @@ class SortTest extends TestCase
     {
         $script = new Script();
         $script->language('painless');
-        $script->source("doc['field_name'].value * params.factor");
+        $script->source("doc['name'].value * params.factor");
         $script->parameters([
             'factor' => 1.1,
         ]);
@@ -211,12 +202,18 @@ class SortTest extends TestCase
         $sort->order('desc');
         $sort->script($script);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             '_script' => [
                 'order'  => 'desc',
+                'type'   => 'number',
                 'script' => [
                     'lang'   => 'painless',
-                    'source' => "doc['field_name'].value * params.factor",
+                    'source' => "doc['name'].value * params.factor",
                     'params' => [
                         'factor' => 1.1,
                     ],
@@ -224,23 +221,9 @@ class SortTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "_script": {
-                    "order": "desc",
-                    "script": {
-                        "lang": "painless",
-                        "source": "doc['field_name'].value * params.factor",
-                        "params": {
-                            "factor": 1.1
-                        }
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $sort->toArray());
-        $this->assertSame($expectedJson, $sort->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($sort->isEmpty());
+        $this->assertSame($expected, $sort->build());
     }
 
     /**
@@ -252,7 +235,7 @@ class SortTest extends TestCase
         $this->expectExceptionMessage('The "field" is required!');
 
         $sort = new Sort();
-        $sort->toArray();
+        $sort->build();
     }
 
     /**

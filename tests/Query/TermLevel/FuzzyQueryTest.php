@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\FuzzyQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class FuzzyQueryTest extends TestCase
 {
@@ -15,26 +19,31 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => 'ki',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": "ki"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -42,12 +51,24 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->boost(1.0);
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->boost(1.0);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => [
                     'value' => 'ki',
@@ -56,19 +77,9 @@ class FuzzyQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": {
-                        "value": "ki",
-                        "boost": 1
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -76,12 +87,24 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->name('my-query-name');
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => [
                     'value' => 'ki',
@@ -90,19 +113,9 @@ class FuzzyQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": {
-                        "value": "ki",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -110,12 +123,24 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_fuziness_parameter()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->fuzziness(2);
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->fuzziness(2);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => [
                     'value'     => 'ki',
@@ -124,19 +149,9 @@ class FuzzyQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": {
-                        "value": "ki",
-                        "fuzziness": 2
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -144,12 +159,24 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_max_expansions_parameter()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->maxExpansions(100);
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->maxExpansions(100);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => [
                     'value'          => 'ki',
@@ -158,19 +185,9 @@ class FuzzyQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": {
-                        "value": "ki",
-                        "max_expansions": 100
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -178,12 +195,24 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_prefix_length_parameter()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->prefixLength(1);
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->prefixLength(1);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => [
                     'value'         => 'ki',
@@ -192,19 +221,9 @@ class FuzzyQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": {
-                        "value": "ki",
-                        "prefix_length": 1
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -212,12 +231,24 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query_with_transpositions_parameter_to_true()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->transpositions(true);
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->transpositions(true);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => [
                     'value'          => 'ki',
@@ -226,19 +257,9 @@ class FuzzyQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": {
-                        "value": "ki",
-                        "transpositions": true
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -246,12 +267,24 @@ class FuzzyQueryTest extends TestCase
      */
     public function it_builds_the_query_with_transpositions_parameter_to_false()
     {
-        $query = new FuzzyQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->transpositions(false);
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->transpositions(false);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fuzzy' => [
                 'user' => [
                     'value'          => 'ki',
@@ -260,19 +293,45 @@ class FuzzyQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fuzzy": {
-                    "user": {
-                        "value": "ki",
-                        "transpositions": false
-                    }
-                }
-            }
-            JSON;
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
+    }
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+    /**
+     * @test
+     */
+    public function it_builds_the_query_with_the_rewrite_parameter()
+    {
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
+        $fuzzyQuery->value('ki');
+        $fuzzyQuery->rewrite('a value');
+
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($fuzzyQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($fuzzyQuery) {
+                $query->fuzzy($fuzzyQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'fuzzy' => [
+                'user' => [
+                    'value'   => 'ki',
+                    'rewrite' => 'a value',
+                ],
+            ],
+        ];
+
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($fuzzyQuery->isEmpty());
+        $this->assertSame($expected, $fuzzyQuery->build());
     }
 
     /**
@@ -283,8 +342,8 @@ class FuzzyQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new FuzzyQuery();
-        $query->toArray();
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->build();
     }
 
     /**
@@ -295,9 +354,9 @@ class FuzzyQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "value" is required!');
 
-        $query = new FuzzyQuery();
-        $query->field('user');
+        $fuzzyQuery = new FuzzyQuery();
+        $fuzzyQuery->field('user');
 
-        $query->toArray();
+        $fuzzyQuery->build();
     }
 }

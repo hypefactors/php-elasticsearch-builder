@@ -4,10 +4,14 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\Joining;
 
+use Hypefactors\ElasticBuilder\Core\InnerHits;
+use Hypefactors\ElasticBuilder\Core\InnerHitsInterface;
 use Hypefactors\ElasticBuilder\Query\Joining\NestedQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermsQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class NestedQueryTest extends TestCase
 {
@@ -20,11 +24,19 @@ class NestedQueryTest extends TestCase
         $termQuery->field('user');
         $termQuery->value('john');
 
-        $query = new NestedQuery();
-        $query->path('some-path');
-        $query->query($termQuery);
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->path('some-path');
+        $nestedQuery->query($termQuery);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->nested($nestedQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'nested' => [
                 'path'  => 'some-path',
                 'query' => [
@@ -35,23 +47,9 @@ class NestedQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "nested": {
-                    "path": "some-path",
-                    "query": {
-                        "terms": {
-                            "user": [
-                                "john"
-                            ]
-                        }
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($nestedQuery->isEmpty());
+        $this->assertSame($expected, $nestedQuery->build());
     }
 
     /**
@@ -63,12 +61,20 @@ class NestedQueryTest extends TestCase
         $termQuery->field('user');
         $termQuery->value('john');
 
-        $query = new NestedQuery();
-        $query->path('some-path');
-        $query->query($termQuery);
-        $query->scoreMode('avg');
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->path('some-path');
+        $nestedQuery->query($termQuery);
+        $nestedQuery->scoreMode('avg');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->nested($nestedQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'nested' => [
                 'path'  => 'some-path',
                 'query' => [
@@ -80,24 +86,9 @@ class NestedQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "nested": {
-                    "path": "some-path",
-                    "query": {
-                        "terms": {
-                            "user": [
-                                "john"
-                            ]
-                        }
-                    },
-                    "score_mode": "avg"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($nestedQuery->isEmpty());
+        $this->assertSame($expected, $nestedQuery->build());
     }
 
     /**
@@ -109,12 +100,20 @@ class NestedQueryTest extends TestCase
         $termQuery->field('user');
         $termQuery->value('john');
 
-        $query = new NestedQuery();
-        $query->path('some-path');
-        $query->query($termQuery);
-        $query->ignoreUnmapped(true);
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->path('some-path');
+        $nestedQuery->query($termQuery);
+        $nestedQuery->ignoreUnmapped(true);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->nested($nestedQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'nested' => [
                 'path'  => 'some-path',
                 'query' => [
@@ -126,24 +125,96 @@ class NestedQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "nested": {
-                    "path": "some-path",
-                    "query": {
-                        "terms": {
-                            "user": [
-                                "john"
-                            ]
-                        }
-                    },
-                    "ignore_unmapped": true
-                }
-            }
-            JSON;
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($nestedQuery->isEmpty());
+        $this->assertSame($expected, $nestedQuery->build());
+    }
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+    /**
+     * @test
+     */
+    public function the_inner_hits_can_be_applied_using_a_class_instance()
+    {
+        $termQuery = new TermsQuery();
+        $termQuery->field('user');
+        $termQuery->value('john');
+
+        $innerHits = new InnerHits();
+        $innerHits->name('named-query');
+
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->path('some-path');
+        $nestedQuery->query($termQuery);
+        $nestedQuery->innerHits($innerHits);
+
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->nested($nestedQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'nested' => [
+                'path'  => 'some-path',
+                'query' => [
+                    'terms' => [
+                        'user' => ['john'],
+                    ],
+                ],
+                'inner_hits' => [
+                    'name' => 'named-query',
+                ],
+            ],
+        ];
+
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($nestedQuery->isEmpty());
+        $this->assertSame($expected, $nestedQuery->build());
+    }
+
+    /**
+     * @test
+     */
+    public function the_inner_hits_can_be_applied_using_a_closure()
+    {
+        $termQuery = new TermsQuery();
+        $termQuery->field('user');
+        $termQuery->value('john');
+
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->path('some-path');
+        $nestedQuery->query($termQuery);
+        $nestedQuery->innerHits(function (InnerHitsInterface $query) {
+            $query->name('named-query');
+        });
+
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->nested($nestedQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'nested' => [
+                'path'  => 'some-path',
+                'query' => [
+                    'terms' => [
+                        'user' => ['john'],
+                    ],
+                ],
+                'inner_hits' => [
+                    'name' => 'named-query',
+                ],
+            ],
+        ];
+
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($nestedQuery->isEmpty());
+        $this->assertSame($expected, $nestedQuery->build());
     }
 
     /**
@@ -158,10 +229,10 @@ class NestedQueryTest extends TestCase
         $termQuery->field('user');
         $termQuery->value('john');
 
-        $query = new NestedQuery();
-        $query->path('some-path');
-        $query->query($termQuery);
-        $query->scoreMode('foo');
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->path('some-path');
+        $nestedQuery->query($termQuery);
+        $nestedQuery->scoreMode('foo');
     }
 
     /**
@@ -172,8 +243,8 @@ class NestedQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "path" is required!');
 
-        $query = new NestedQuery();
-        $query->toArray();
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->build();
     }
 
     /**
@@ -184,9 +255,9 @@ class NestedQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "query" is required!');
 
-        $query = new NestedQuery();
-        $query->path('some-path');
+        $nestedQuery = new NestedQuery();
+        $nestedQuery->path('some-path');
 
-        $query->toArray();
+        $nestedQuery->build();
     }
 }

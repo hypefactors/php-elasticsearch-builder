@@ -8,159 +8,78 @@ use Hypefactors\ElasticBuilder\Query\Query;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-range-query.html
  */
-class RangeQuery extends Query
+class RangeQuery extends Query implements RangeQueryInterface
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
-    /**
-     * Sets the field to search on.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field(string $field): self
+    public function field(string $field): RangeQueryInterface
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Sets the "great than (gt)" range option for the given value.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function gt($value): self
+    public function gt(int | float | string $value): RangeQueryInterface
     {
         $this->body['gt'] = $value;
 
         return $this;
     }
 
-    /**
-     * Proxy method for the "greater than (gt)" range option.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function greaterThan($value): self
+    public function greaterThan(int | float | string $value): RangeQueryInterface
     {
         return $this->gt($value);
     }
 
-    /**
-     * Sets the "greater than equals (gte)" range option for the given value.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function gte($value): self
+    public function gte(int | float | string $value): RangeQueryInterface
     {
         $this->body['gte'] = $value;
 
         return $this;
     }
 
-    /**
-     * Proxy method for the "greater than equals (gte)" range option.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function greaterThanEquals($value): self
+    public function greaterThanEquals(int | float | string $value): RangeQueryInterface
     {
         return $this->gte($value);
     }
 
-    /**
-     * Sets the "less than (gt)" range option for the given value.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function lt($value): self
+    public function lt(int | float | string $value): RangeQueryInterface
     {
         $this->body['lt'] = $value;
 
         return $this;
     }
 
-    /**
-     * Proxy method for the "less than (lt)" range option.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function lessThan($value): self
+    public function lessThan(int | float | string $value): RangeQueryInterface
     {
         return $this->lt($value);
     }
 
-    /**
-     * Sets the "less than equals (gt)" range option for the given value.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function lte($value): self
+    public function lte(int | float | string $value): RangeQueryInterface
     {
         $this->body['lte'] = $value;
 
         return $this;
     }
 
-    /**
-     * Proxy method for the "less than equals (lte)" range option.
-     *
-     * @param int|string $value
-     *
-     * @return $this
-     */
-    public function lessThanEquals($value): self
+    public function lessThanEquals(int | float | string $value): RangeQueryInterface
     {
         return $this->lte($value);
     }
 
-    /**
-     * Sets the date format that will be used to convert date values in the query.
-     *
-     * @param string $format
-     *
-     * @return $this
-     */
-    public function format(string $format): self
+    public function format(string $format): RangeQueryInterface
     {
         $this->body['format'] = $format;
 
         return $this;
     }
 
-    /**
-     * Indicates how the range query matches values for range fields.
-     *
-     * @param string $relation
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return $this
-     */
-    public function relation(string $relation): self
+    public function relation(string $relation): RangeQueryInterface
     {
         $relationUpper = strtoupper($relation);
 
@@ -175,28 +94,14 @@ class RangeQuery extends Query
         return $this;
     }
 
-    /**
-     * Sets the timezone that will be used to convert the date values in the query to UTC.
-     *
-     * @param string $timezone
-     *
-     * @return $this
-     */
-    public function timezone(string $timezone): self
+    public function timezone(string $timezone): RangeQueryInterface
     {
         $this->body['time_zone'] = $timezone;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

@@ -5,9 +5,9 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Core;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/inner-hits.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/inner-hits.html
  */
-final class InnerHits implements InnerHitsInterface
+class InnerHits implements InnerHitsInterface
 {
     private array $body = [];
 
@@ -114,13 +114,13 @@ final class InnerHits implements InnerHitsInterface
         return $this;
     }
 
-    public function toArray(): array
+    public function isEmpty(): bool
     {
-        return Util::recursivetoArray($this->body);
+        return empty($this->body);
     }
 
-    public function toJson(int $options = 0): string
+    public function build(): array
     {
-        return json_encode($this->toArray(), $options);
+        return Util::recursivetoArray($this->body);
     }
 }

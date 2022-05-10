@@ -4,52 +4,33 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Query\Joining;
 
+use Hypefactors\ElasticBuilder\Core\InnerHits;
+use Hypefactors\ElasticBuilder\Core\InnerHitsInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Query\Query;
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-nested-query.html
  */
-class NestedQuery extends Query
+class NestedQuery extends Query implements NestedQueryInterface
 {
-    /**
-     * Sets the path to search on.
-     *
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function path(string $path): self
+    public function path(string $path): NestedQueryInterface
     {
         $this->body['path'] = $path;
 
         return $this;
     }
 
-    /**
-     * Sets the Query to be ran on the nested objects in the path.
-     *
-     * @param \Hypefactors\ElasticBuilder\Query\QueryInterface $query
-     *
-     * @return $this
-     */
-    public function query(QueryInterface $query): self
+    public function query(QueryInterface $query): NestedQueryInterface
     {
         $this->body['query'] = $query;
 
         return $this;
     }
 
-    /**
-     * Indicates how scores for matching child objects affect the root parent document’s relevance score.
-     *
-     * @param string $scoreMode
-     *
-     * @return $this
-     */
-    public function scoreMode(string $scoreMode): self
+    public function scoreMode(string $scoreMode): NestedQueryInterface
     {
         $scoreModeLower = strtolower($scoreMode);
 
@@ -64,28 +45,31 @@ class NestedQuery extends Query
         return $this;
     }
 
-    /**
-     * Indicates whether to ignore an unmapped path and not return any documents instead of an error.
-     *
-     * @param bool $status
-     *
-     * @return $this
-     */
-    public function ignoreUnmapped(bool $status): self
+    public function ignoreUnmapped(bool $status): NestedQueryInterface
     {
         $this->body['ignore_unmapped'] = $status;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function innerHits(callable | InnerHitsInterface $value): NestedQueryInterface
+    {
+        if (is_callable($value)) {
+            $innerHits = new InnerHits();
+
+            $value($innerHits);
+
+            return $this->innerHits($innerHits);
+        }
+
+        if (! $value->isEmpty()) {
+            $this->body['inner_hits'] = $value->build();
+        }
+
+        return $this;
+    }
+
+    public function build(): array
     {
         if (! isset($this->body['path'])) {
             throw new InvalidArgumentException('The "path" is required!');

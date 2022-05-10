@@ -9,46 +9,18 @@ use Hypefactors\ElasticBuilder\Query\Query;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-ids-query.html
  */
-class IdsQuery extends Query
+class IdsQuery extends Query implements IdsQueryInterface
 {
-    /**
-     * Sets the type of the documents to be returned.
-     *
-     * @param string $ids
-     *
-     * @return $this
-     */
-    public function type(string $type): self
-    {
-        $this->body['type'] = $type;
-
-        return $this;
-    }
-
-    /**
-     * Sets the documents ids to be returned.
-     *
-     * @param string $ids
-     *
-     * @return $this
-     */
-    public function values(array $ids): self
+    public function values(array $ids): IdsQueryInterface
     {
         $this->body['values'] = $ids;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! isset($this->body['values'])) {
             throw new InvalidArgumentException('The "values" are required!');

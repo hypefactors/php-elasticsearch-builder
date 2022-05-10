@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-interface ScriptInterface extends ArrayableInterface, JsonableInterface
+interface ScriptInterface extends ArrayableInterface
 {
     /**
      * Specifies the id of the stored script.

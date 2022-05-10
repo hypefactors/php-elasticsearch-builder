@@ -9,32 +9,18 @@ use Hypefactors\ElasticBuilder\Query\Query;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-exists-query.html
  */
-class ExistsQuery extends Query
+class ExistsQuery extends Query implements ExistsQueryInterface
 {
-    /**
-     * Sets the field to search on.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field(string $field): self
+    public function field(string $field): ExistsQueryInterface
     {
         $this->body['field'] = $field;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! isset($this->body['field'])) {
             throw new InvalidArgumentException('The "field" is required!');

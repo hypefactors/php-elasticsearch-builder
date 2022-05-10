@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\RegexpQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class RegexpQueryTest extends TestCase
 {
@@ -15,26 +19,31 @@ class RegexpQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new RegexpQuery();
-        $query->field('name.first');
-        $query->value('s.*');
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->field('name.first');
+        $regexpQuery->value('s.*');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($regexpQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($regexpQuery) {
+                $query->regexp($regexpQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'regexp' => [
                 'name.first' => 's.*',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "regexp": {
-                    "name.first": "s.*"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($regexpQuery->isEmpty());
+        $this->assertSame($expected, $regexpQuery->build());
     }
 
     /**
@@ -42,12 +51,24 @@ class RegexpQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new RegexpQuery();
-        $query->field('name.first');
-        $query->value('s.*');
-        $query->boost(1.5);
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->field('name.first');
+        $regexpQuery->value('s.*');
+        $regexpQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($regexpQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($regexpQuery) {
+                $query->regexp($regexpQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'regexp' => [
                 'name.first' => [
                     'value' => 's.*',
@@ -56,19 +77,9 @@ class RegexpQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "regexp": {
-                    "name.first": {
-                        "value": "s.*",
-                        "boost": 1.5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($regexpQuery->isEmpty());
+        $this->assertSame($expected, $regexpQuery->build());
     }
 
     /**
@@ -76,12 +87,24 @@ class RegexpQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new RegexpQuery();
-        $query->field('name.first');
-        $query->value('s.*');
-        $query->name('my-query-name');
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->field('name.first');
+        $regexpQuery->value('s.*');
+        $regexpQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($regexpQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($regexpQuery) {
+                $query->regexp($regexpQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'regexp' => [
                 'name.first' => [
                     'value' => 's.*',
@@ -90,19 +113,9 @@ class RegexpQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "regexp": {
-                    "name.first": {
-                        "value": "s.*",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($regexpQuery->isEmpty());
+        $this->assertSame($expected, $regexpQuery->build());
     }
 
     /**
@@ -110,12 +123,24 @@ class RegexpQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_flags_parameter_from_a_string()
     {
-        $query = new RegexpQuery();
-        $query->field('name.first');
-        $query->value('s.*');
-        $query->flags('INTERSECTION|COMPLEMENT|EMPTY');
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->field('name.first');
+        $regexpQuery->value('s.*');
+        $regexpQuery->flags('INTERSECTION|COMPLEMENT|EMPTY');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($regexpQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($regexpQuery) {
+                $query->regexp($regexpQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'regexp' => [
                 'name.first' => [
                     'value' => 's.*',
@@ -124,19 +149,9 @@ class RegexpQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "regexp": {
-                    "name.first": {
-                        "value": "s.*",
-                        "flags": "INTERSECTION|COMPLEMENT|EMPTY"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($regexpQuery->isEmpty());
+        $this->assertSame($expected, $regexpQuery->build());
     }
 
     /**
@@ -144,12 +159,24 @@ class RegexpQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_flags_parameter_from_an_array()
     {
-        $query = new RegexpQuery();
-        $query->field('name.first');
-        $query->value('s.*');
-        $query->flags(['INTERSECTION', 'COMPLEMENT', 'EMPTY']);
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->field('name.first');
+        $regexpQuery->value('s.*');
+        $regexpQuery->flags(['INTERSECTION', 'COMPLEMENT', 'EMPTY']);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($regexpQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($regexpQuery) {
+                $query->regexp($regexpQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'regexp' => [
                 'name.first' => [
                     'value' => 's.*',
@@ -158,88 +185,82 @@ class RegexpQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "regexp": {
-                    "name.first": {
-                        "value": "s.*",
-                        "flags": "INTERSECTION|COMPLEMENT|EMPTY"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($regexpQuery->isEmpty());
+        $this->assertSame($expected, $regexpQuery->build());
     }
 
-    /**
-     * @test
-     */
-    public function it_builds_the_query_with_the_max_determinized_states_parameter()
-    {
-        $query = new RegexpQuery();
-        $query->field('name.first');
-        $query->value('s.*');
-        $query->maxDeterminizedStates(5);
+    // /**
+    //  * @test
+    //  */
+    // public function it_builds_the_query_with_the_max_determinized_states_parameter()
+    // {
+    //     $regexpQuery = new RegexpQuery();
+    //     $regexpQuery->field('name.first');
+    //     $regexpQuery->value('s.*');
+    //     $regexpQuery->maxDeterminizedStates(5);
 
-        $expectedArray = [
-            'regexp' => [
-                'name.first' => [
-                    'value'                   => 's.*',
-                    'max_determinized_states' => 5,
-                ],
-            ],
-        ];
+    //     $queryBuilder = new QueryBuilder();
+    //     $queryBuilder->bool(function (BoolQueryInterface $query) use ($regexpQuery) {
+    //         $query->filter(function (FilterQueryInterface $query) use ($regexpQuery) {
+    //             $query->regexp($regexpQuery);
+    //         });
+    //     });
 
-        $expectedJson = <<<'JSON'
-            {
-                "regexp": {
-                    "name.first": {
-                        "value": "s.*",
-                        "max_determinized_states": 5
-                    }
-                }
-            }
-            JSON;
+    //     $requestBuilder = new RequestBuilder();
+    //     $requestBuilder->query($queryBuilder);
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
-    }
+    //     $response = $this->client->search($requestBuilder->build());
 
-    /**
-     * @test
-     */
-    public function it_builds_the_query_with_the_rewrite_parameter()
-    {
-        $query = new RegexpQuery();
-        $query->field('name.first');
-        $query->value('s.*');
-        $query->rewrite('rewrite');
+    //     $expected = [
+    //         'regexp' => [
+    //             'name.first' => [
+    //                 'value'                   => 's.*',
+    //                 'max_determinized_states' => 5,
+    //             ],
+    //         ],
+    //     ];
 
-        $expectedArray = [
-            'regexp' => [
-                'name.first' => [
-                    'value'   => 's.*',
-                    'rewrite' => 'rewrite',
-                ],
-            ],
-        ];
+    //     $this->assertArrayHasKey('took', $response);
+    //     $this->assertFalse($regexpQuery->isEmpty());
+    //     $this->assertSame($expected, $regexpQuery->build());
+    // }
 
-        $expectedJson = <<<'JSON'
-            {
-                "regexp": {
-                    "name.first": {
-                        "value": "s.*",
-                        "rewrite": "rewrite"
-                    }
-                }
-            }
-            JSON;
+    // /**
+    //  * @test
+    //  */
+    // public function it_builds_the_query_with_the_rewrite_parameter()
+    // {
+    //     $regexpQuery = new RegexpQuery();
+    //     $regexpQuery->field('name.first');
+    //     $regexpQuery->value('s.*');
+    //     $regexpQuery->rewrite('rewrite');
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
-    }
+    //     $queryBuilder = new QueryBuilder();
+    //     $queryBuilder->bool(function (BoolQueryInterface $query) use ($regexpQuery) {
+    //         $query->filter(function (FilterQueryInterface $query) use ($regexpQuery) {
+    //             $query->regexp($regexpQuery);
+    //         });
+    //     });
+
+    //     $requestBuilder = new RequestBuilder();
+    //     $requestBuilder->query($queryBuilder);
+
+    //     $response = $this->client->search($requestBuilder->build());
+
+    //     $expected = [
+    //         'regexp' => [
+    //             'name.first' => [
+    //                 'value'   => 's.*',
+    //                 'rewrite' => 'rewrite',
+    //             ],
+    //         ],
+    //     ];
+
+    //     $this->assertArrayHasKey('took', $response);
+    //     $this->assertFalse($regexpQuery->isEmpty());
+    //     $this->assertSame($expected, $regexpQuery->build());
+    // }
 
     /**
      * @test
@@ -249,8 +270,8 @@ class RegexpQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The given flags are invalid: FOO, BAR');
 
-        $query = new RegexpQuery();
-        $query->flags(['foo', 'COMPLEMENT', 'bAr']);
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->flags(['foo', 'COMPLEMENT', 'bAr']);
     }
 
     /**
@@ -261,8 +282,8 @@ class RegexpQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new RegexpQuery();
-        $query->toArray();
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->build();
     }
 
     /**
@@ -273,9 +294,9 @@ class RegexpQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "value" is required!');
 
-        $query = new RegexpQuery();
-        $query->field('name.first');
+        $regexpQuery = new RegexpQuery();
+        $regexpQuery->field('name.first');
 
-        $query->toArray();
+        $regexpQuery->build();
     }
 }

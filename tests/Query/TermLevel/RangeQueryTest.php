@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\RangeQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class RangeQueryTest extends TestCase
 {
@@ -15,11 +19,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->boost(1.5);
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'boost' => 1.5,
@@ -27,18 +43,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "boost": 1.5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -46,11 +53,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->name('my-query-name');
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     '_name' => 'my-query-name',
@@ -58,18 +77,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -77,11 +87,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_less_than_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->lessThan(10);
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->lessThan(10);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'lt' => 10,
@@ -89,18 +111,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "lt": 10
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -108,11 +121,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_less_than_or_equal_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->lessThanEquals(10);
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->lessThanEquals(10);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'lte' => 10,
@@ -120,18 +145,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "lte": 10
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -139,11 +155,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_greater_than_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->greaterThan(12);
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->greaterThan(12);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'gt' => 12,
@@ -151,18 +179,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "gt": 12
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -170,11 +189,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_greater_than_or_equal_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->greaterThanEquals(12);
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->greaterThanEquals(12);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'gte' => 12,
@@ -182,18 +213,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "gte": 12
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -201,11 +223,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_format_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->format('yyyy-MM-dd');
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->format('yyyy-MM-dd');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'format' => 'yyyy-MM-dd',
@@ -213,18 +247,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "format": "yyyy-MM-dd"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -232,11 +257,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_relation_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->relation('INTERSECTS');
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->relation('INTERSECTS');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'relation' => 'INTERSECTS',
@@ -244,18 +281,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "relation": "INTERSECTS"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -263,11 +291,23 @@ class RangeQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_timezone_parameter()
     {
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->timezone('+01:00');
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->timezone('+01:00');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($rangeQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($rangeQuery) {
+                $query->range($rangeQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'range' => [
                 'user' => [
                     'time_zone' => '+01:00',
@@ -275,18 +315,9 @@ class RangeQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "range": {
-                    "user": {
-                        "time_zone": "+01:00"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($rangeQuery->isEmpty());
+        $this->assertSame($expected, $rangeQuery->build());
     }
 
     /**
@@ -297,9 +328,9 @@ class RangeQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The [foo] relation is invalid!');
 
-        $query = new RangeQuery();
-        $query->field('user');
-        $query->relation('foo');
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->field('user');
+        $rangeQuery->relation('foo');
     }
 
     /**
@@ -310,7 +341,7 @@ class RangeQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new RangeQuery();
-        $query->toArray();
+        $rangeQuery = new RangeQuery();
+        $rangeQuery->build();
     }
 }

@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\PrefixQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class PrefixQueryTest extends TestCase
 {
@@ -15,26 +19,31 @@ class PrefixQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new PrefixQuery();
-        $query->field('user');
-        $query->value('ki');
+        $prefixQuery = new PrefixQuery();
+        $prefixQuery->field('user');
+        $prefixQuery->value('ki');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($prefixQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($prefixQuery) {
+                $query->prefix($prefixQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'prefix' => [
                 'user' => 'ki',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "prefix": {
-                    "user": "ki"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($prefixQuery->isEmpty());
+        $this->assertSame($expected, $prefixQuery->build());
     }
 
     /**
@@ -42,12 +51,24 @@ class PrefixQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new PrefixQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->boost(1.5);
+        $prefixQuery = new PrefixQuery();
+        $prefixQuery->field('user');
+        $prefixQuery->value('ki');
+        $prefixQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($prefixQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($prefixQuery) {
+                $query->prefix($prefixQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'prefix' => [
                 'user' => [
                     'value' => 'ki',
@@ -56,19 +77,9 @@ class PrefixQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "prefix": {
-                    "user": {
-                        "value": "ki",
-                        "boost": 1.5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($prefixQuery->isEmpty());
+        $this->assertSame($expected, $prefixQuery->build());
     }
 
     /**
@@ -76,12 +87,24 @@ class PrefixQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new PrefixQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->name('my-query-name');
+        $prefixQuery = new PrefixQuery();
+        $prefixQuery->field('user');
+        $prefixQuery->value('ki');
+        $prefixQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($prefixQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($prefixQuery) {
+                $query->prefix($prefixQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'prefix' => [
                 'user' => [
                     'value' => 'ki',
@@ -90,19 +113,9 @@ class PrefixQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "prefix": {
-                    "user": {
-                        "value": "ki",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($prefixQuery->isEmpty());
+        $this->assertSame($expected, $prefixQuery->build());
     }
 
     /**
@@ -110,12 +123,24 @@ class PrefixQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_rewrite_parameter()
     {
-        $query = new PrefixQuery();
-        $query->field('user');
-        $query->value('ki');
-        $query->rewrite('rewrite');
+        $prefixQuery = new PrefixQuery();
+        $prefixQuery->field('user');
+        $prefixQuery->value('ki');
+        $prefixQuery->rewrite('rewrite');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($prefixQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($prefixQuery) {
+                $query->prefix($prefixQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'prefix' => [
                 'user' => [
                     'value'   => 'ki',
@@ -124,19 +149,9 @@ class PrefixQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "prefix": {
-                    "user": {
-                        "value": "ki",
-                        "rewrite": "rewrite"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($prefixQuery->isEmpty());
+        $this->assertSame($expected, $prefixQuery->build());
     }
 
     /**
@@ -147,8 +162,8 @@ class PrefixQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new PrefixQuery();
-        $query->toArray();
+        $prefixQuery = new PrefixQuery();
+        $prefixQuery->build();
     }
 
     /**
@@ -159,9 +174,9 @@ class PrefixQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "value" is required!');
 
-        $query = new PrefixQuery();
-        $query->field('user');
+        $prefixQuery = new PrefixQuery();
+        $prefixQuery->field('user');
 
-        $query->toArray();
+        $prefixQuery->build();
     }
 }

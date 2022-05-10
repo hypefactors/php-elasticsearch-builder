@@ -19,22 +19,13 @@ class MatchQueryTest extends TestCase
         $query->field('message');
         $query->query('this is a test');
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => 'this is a test',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": "this is a test"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -47,7 +38,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->boost(1.5);
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query' => 'this is a test',
@@ -56,19 +47,7 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "boost": 1.5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -81,7 +60,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->name('my-query-name');
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query' => 'this is a test',
@@ -90,19 +69,7 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -115,7 +82,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->cutOffFrequency(0.001);
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query'            => 'this is a test',
@@ -124,19 +91,7 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "cutoff_frequency": 0.001
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -149,7 +104,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->fuzziness(2);
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query'     => 'this is a test',
@@ -158,19 +113,7 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "fuzziness": 2
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -183,7 +126,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->lenient(true);
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query'   => 'this is a test',
@@ -192,19 +135,7 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "lenient": true
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -217,7 +148,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->maxExpansions(5);
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query'          => 'this is a test',
@@ -226,19 +157,7 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "max_expansions": 5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -251,7 +170,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->prefixLength(5);
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query'         => 'this is a test',
@@ -260,19 +179,7 @@ class MatchQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "prefix_length": 5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -285,7 +192,7 @@ class MatchQueryTest extends TestCase
         $query->query('this is a test');
         $query->operator('and');
 
-        $expectedArray = [
+        $expected = [
             'match' => [
                 'message' => [
                     'query'    => 'this is a test',
@@ -293,20 +200,7 @@ class MatchQueryTest extends TestCase
                 ],
             ],
         ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "match": {
-                    "message": {
-                        "query": "this is a test",
-                        "operator": "and"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -330,7 +224,7 @@ class MatchQueryTest extends TestCase
         $this->expectExceptionMessage('The "field" is required!');
 
         $query = new MatchQuery();
-        $query->toArray();
+        $query->build();
     }
 
     /**
@@ -344,6 +238,6 @@ class MatchQueryTest extends TestCase
         $query = new MatchQuery();
         $query->field('message');
 
-        $query->toArray();
+        $query->build();
     }
 }

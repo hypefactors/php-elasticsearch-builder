@@ -32,7 +32,6 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
       - name: Cache dependencies
         uses: actions/cache@v1
         with:
@@ -53,6 +52,9 @@ jobs:
           timeout_minutes: 5
           max_attempts: 5
           command: composer update --no-interaction --no-progress
+
+      - name: Seed Elasticsearch server
+        run: php .github/elasticsearch-seeder.php
 
       - name: Install PHPUnit
         uses: nick-invision/retry@v1

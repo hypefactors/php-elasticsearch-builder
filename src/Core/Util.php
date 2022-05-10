@@ -6,7 +6,7 @@ namespace Hypefactors\ElasticBuilder\Core;
 
 use stdClass;
 
-final class Util
+class Util
 {
     public static function arrayWrap($values)
     {
@@ -15,9 +15,9 @@ final class Util
 
     public static function recursivetoArray($values)
     {
-        return array_map(function ($value) {
-            if (is_object($value) && method_exists($value, 'toArray')) {
-                return $value->toArray();
+        $values = array_map(function ($value) {
+            if (is_object($value) && method_exists($value, 'build')) {
+                return $value->build();
             }
 
             if (is_array($value)) {
@@ -30,5 +30,10 @@ final class Util
 
             return $value;
         }, $values);
+
+        // TODO: Determine if the "array_filter" causes problems or not ...
+        return array_filter($values, function ($x) {
+            return ! (is_null($x) || $x === 'false');
+        });
     }
 }

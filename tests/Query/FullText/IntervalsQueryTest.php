@@ -4,15 +4,20 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\FullText;
 
-use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\AllOfRule;
-use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\AnyOfRule;
-use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\FilterRule;
-use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\FuzzyRule;
-use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\MatchRule;
-use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\PrefixRule;
-use Hypefactors\ElasticBuilder\Query\FullText\IntervalQueryRule\WildcardRule;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\AllOfRule;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\AnyOfRule;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\FilterRule;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\FilterRule\AfterRule;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\FuzzyRule;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\MatchRule;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\PrefixRule;
+use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQueryRule\WildcardRule;
 use Hypefactors\ElasticBuilder\Query\FullText\IntervalsQuery;
-use PHPUnit\Framework\TestCase;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 
 class IntervalsQueryTest extends TestCase
 {
@@ -21,20 +26,27 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_an_empty_query()
     {
-        $query = new IntervalsQuery();
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
 
-        $expectedArray = [
-            'intervals' => [],
-        ];
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": []
-            }
-            JSON;
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
 
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [];
+
+        $this->assertArrayHasKey('took', $response);
+        $this->assertTrue($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -42,35 +54,38 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_match_as_a_callable()
     {
-        $query = new IntervalsQuery();
-        $query->match(function (MatchRule $query) {
-            $query->boost(1);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->match(function (MatchRule $query) {
+            $query->query('my-query');
         });
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'match' => [
-                        'boost' => 1.0,
+                        'query' => 'my-query',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "match": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -79,35 +94,38 @@ class IntervalsQueryTest extends TestCase
     public function it_builds_the_query_using_match_as_a_class()
     {
         $matchRule = new MatchRule();
-        $matchRule->boost(1);
+        $matchRule->query('my-query');
 
-        $query = new IntervalsQuery();
-        $query->match($matchRule);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->match($matchRule);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'match' => [
-                        'boost' => 1.0,
+                        'query' => 'my-query',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "match": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -115,35 +133,38 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_prefix_as_a_callable()
     {
-        $query = new IntervalsQuery();
-        $query->prefix(function (PrefixRule $query) {
-            $query->boost(1);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->prefix(function (PrefixRule $query) {
+            $query->prefix('prefix-here');
         });
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'prefix' => [
-                        'boost' => 1.0,
+                        'prefix' => 'prefix-here',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "prefix": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -152,35 +173,38 @@ class IntervalsQueryTest extends TestCase
     public function it_builds_the_query_using_prefix_as_a_class()
     {
         $prefixRule = new PrefixRule();
-        $prefixRule->boost(1);
+        $prefixRule->prefix('prefix-here');
 
-        $query = new IntervalsQuery();
-        $query->prefix($prefixRule);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->prefix($prefixRule);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'prefix' => [
-                        'boost' => 1.0,
+                        'prefix' => 'prefix-here',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "prefix": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -188,35 +212,38 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_wildcard_as_a_callable()
     {
-        $query = new IntervalsQuery();
-        $query->wildcard(function (WildcardRule $query) {
-            $query->boost(1);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->wildcard(function (WildcardRule $query) {
+            $query->pattern('pattern-here');
         });
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'wildcard' => [
-                        'boost' => 1.0,
+                        'pattern' => 'pattern-here',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "wildcard": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -225,35 +252,38 @@ class IntervalsQueryTest extends TestCase
     public function it_builds_the_query_using_wildcard_as_a_class()
     {
         $wildcardRule = new WildcardRule();
-        $wildcardRule->boost(1);
+        $wildcardRule->pattern('pattern-here');
 
-        $query = new IntervalsQuery();
-        $query->wildcard($wildcardRule);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->wildcard($wildcardRule);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'wildcard' => [
-                        'boost' => 1.0,
+                        'pattern' => 'pattern-here',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "wildcard": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -261,35 +291,38 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_fuzzy_as_a_callable()
     {
-        $query = new IntervalsQuery();
-        $query->fuzzy(function (FuzzyRule $query) {
-            $query->boost(1);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->fuzzy(function (FuzzyRule $query) {
+            $query->term('term-here');
         });
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'fuzzy' => [
-                        'boost' => 1.0,
+                        'term' => 'term-here',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "fuzzy": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -298,35 +331,38 @@ class IntervalsQueryTest extends TestCase
     public function it_builds_the_query_using_fuzzy_as_a_class()
     {
         $fuzzyRule = new FuzzyRule();
-        $fuzzyRule->boost(1);
+        $fuzzyRule->term('term-here');
 
-        $query = new IntervalsQuery();
-        $query->fuzzy($fuzzyRule);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->fuzzy($fuzzyRule);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'fuzzy' => [
-                        'boost' => 1.0,
+                        'term' => 'term-here',
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "fuzzy": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -334,35 +370,47 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_all_of_as_a_callable()
     {
-        $query = new IntervalsQuery();
-        $query->allOf(function (AllOfRule $query) {
-            $query->boost(1);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->allOf(function (AllOfRule $query) {
+            $intervalsQuery = new IntervalsQuery();
+            $intervalsQuery->match(fn (MatchRule $q) => $q->query('query 1'));
+
+            $query->intervals($intervalsQuery);
         });
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'all_of' => [
-                        'boost' => 1.0,
+                        'intervals' => [
+                            [
+                                'match' => [
+                                    'query' => 'query 1',
+                                ],
+                            ],
+                        ],
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "all_of": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -370,36 +418,48 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_all_of_as_a_class()
     {
+        $allOffIntervalsQuery = new IntervalsQuery();
+        $allOffIntervalsQuery->match(fn (MatchRule $q) => $q->query('query 1'));
+
         $allOfRule = new AllOfRule();
-        $allOfRule->boost(1);
+        $allOfRule->intervals($allOffIntervalsQuery);
 
-        $query = new IntervalsQuery();
-        $query->allOf($allOfRule);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->allOf($allOfRule);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'all_of' => [
-                        'boost' => 1.0,
+                        'intervals' => [
+                            [
+                                'match' => [
+                                    'query' => 'query 1',
+                                ],
+                            ],
+                        ],
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "all_of": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -407,35 +467,47 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_any_of_as_a_callable()
     {
-        $query = new IntervalsQuery();
-        $query->anyOf(function (AnyOfRule $query) {
-            $query->boost(1);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->anyOf(function (AnyOfRule $query) {
+            $intervalsQuery = new IntervalsQuery();
+            $intervalsQuery->match(fn (MatchRule $q) => $q->query('query 1'));
+
+            $query->intervals($intervalsQuery);
         });
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
+                'description' => [
                     'any_of' => [
-                        'boost' => 1.0,
+                        'intervals' => [
+                            [
+                                'match' => [
+                                    'query' => 'query 1',
+                                ],
+                            ],
+                        ],
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "any_of": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 
     /**
@@ -443,108 +515,47 @@ class IntervalsQueryTest extends TestCase
      */
     public function it_builds_the_query_using_any_of_as_a_class()
     {
+        $anyOffIntervalsQuery = new IntervalsQuery();
+        $anyOffIntervalsQuery->match(fn (MatchRule $q) => $q->query('query 1'));
+
         $anyOfRule = new AnyOfRule();
-        $anyOfRule->boost(1);
+        $anyOfRule->intervals($anyOffIntervalsQuery);
 
-        $query = new IntervalsQuery();
-        $query->anyOf($anyOfRule);
+        $intervalsQuery = new IntervalsQuery();
+        $intervalsQuery->field('description');
+        $intervalsQuery->anyOf($anyOfRule);
 
-        $expectedArray = [
-            'intervals' => [
-                [
-                    'any_of' => [
-                        'boost' => 1.0,
-                    ],
-                ],
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "any_of": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_builds_the_query_using_filter_as_a_callable()
-    {
-        $query = new IntervalsQuery();
-        $query->filter(function (FilterRule $query) {
-            $query->boost(1);
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($intervalsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($intervalsQuery) {
+                $query->intervals($intervalsQuery);
+            });
         });
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'intervals' => [
-                [
-                    'filter' => [
-                        'boost' => 1.0,
+                'description' => [
+                    'any_of' => [
+                        'intervals' => [
+                            [
+                                'match' => [
+                                    'query' => 'query 1',
+                                ],
+                            ],
+                        ],
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "filter": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_builds_the_query_using_filter_as_a_class()
-    {
-        $filterRule = new FilterRule();
-        $filterRule->boost(1);
-
-        $query = new IntervalsQuery();
-        $query->filter($filterRule);
-
-        $expectedArray = [
-            'intervals' => [
-                [
-                    'filter' => [
-                        'boost' => 1.0,
-                    ],
-                ],
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "intervals": [
-                    {
-                        "filter": {
-                            "boost": 1
-                        }
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($intervalsQuery->isEmpty());
+        $this->assertSame($expected, $intervalsQuery->build());
     }
 }

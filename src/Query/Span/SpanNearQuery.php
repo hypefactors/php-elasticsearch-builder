@@ -8,65 +8,60 @@ use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Query\Query;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-near-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-span-near-query.html
  */
-class SpanNearQuery extends Query implements SpanQueryInterface
+class SpanNearQuery extends Query implements SpanNearQueryInterface
 {
     /**
      * The Span queries.
-     *
-     * @var array
      */
-    protected $queries = [];
+    private array $queries = [];
 
-    /**
-     * Determines wether matches are required to be in-order.
-     *
-     * @param bool $status
-     *
-     * @return $this
-     */
-    public function inOrder(bool $status): self
+    public function spanTerm(callable | SpanTermQueryInterface $value): SpanNearQueryInterface
+    {
+        if (is_callable($value)) {
+            $spanTermQuery = new SpanTermQuery();
+
+            $value($spanTermQuery);
+
+            return $this->spanTerm($spanTermQuery);
+        }
+
+        $this->queries[] = $value;
+
+        return $this;
+    }
+
+    public function spanOrQuery(callable | SpanOrQueryInterface $value): SpanNearQueryInterface
+    {
+        if (is_callable($value)) {
+            $spanOrQuery = new SpanOrQuery();
+
+            $value($spanOrQuery);
+
+            return $this->spanOrQuery($spanOrQuery);
+        }
+
+        $this->queries[] = $value;
+
+        return $this;
+    }
+
+    public function inOrder(bool $status): SpanNearQueryInterface
     {
         $this->body['in_order'] = $status;
 
         return $this;
     }
 
-    /**
-     * Controls the maximum number of intervening unmatched positions permitted.
-     *
-     * @param int $slop
-     *
-     * @return $this
-     */
-    public function slop(int $slop): self
+    public function slop(int $slop): SpanNearQueryInterface
     {
         $this->body['slop'] = $slop;
 
         return $this;
     }
 
-    /**
-     * Adds a Span Query.
-     *
-     * @param \Hypefactors\ElasticBuilder\Query\Span\SpanQueryInterface $query
-     *
-     * @return $this
-     */
-    public function addQuery(SpanQueryInterface $query): self
-    {
-        $this->queries[] = $query;
-
-        return $this;
-    }
-
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         $body = $this->body;
 

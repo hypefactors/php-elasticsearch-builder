@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Core;
 
 use Hypefactors\ElasticBuilder\Core\Script;
+use Hypefactors\ElasticBuilder\Core\Sort;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class ScriptTest extends TestCase
 {
@@ -16,20 +18,24 @@ class ScriptTest extends TestCase
     public function it_builds_the_query_with_the_source_parameter()
     {
         $script = new Script();
-        $script->source('script source');
+        $script->source("doc['name'].value");
 
-        $expectedArray = [
-            'source' => 'script source',
+        $sort = new Sort();
+        $sort->order('desc');
+        $sort->script($script);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'source' => "doc['name'].value",
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "source": "script source"
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $script->toArray());
-        $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($script->isEmpty());
+        $this->assertSame($expected, $script->build());
     }
 
     /**
@@ -38,20 +44,24 @@ class ScriptTest extends TestCase
     public function it_builds_the_query_with_the_id_parameter()
     {
         $script = new Script();
-        $script->id('my id');
+        $script->id('ci-stored-script');
 
-        $expectedArray = [
-            'id' => 'my id',
+        $sort = new Sort();
+        $sort->order('desc');
+        $sort->script($script);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'id' => 'ci-stored-script',
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "id": "my id"
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $script->toArray());
-        $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($script->isEmpty());
+        $this->assertSame($expected, $script->build());
     }
 
     /**
@@ -60,23 +70,26 @@ class ScriptTest extends TestCase
     public function it_builds_the_query_with_the_language_parameter()
     {
         $script = new Script();
-        $script->source('script source');
         $script->language('painless');
+        $script->source("doc['name'].value");
 
-        $expectedArray = [
-            'source' => 'script source',
+        $sort = new Sort();
+        $sort->order('desc');
+        $sort->script($script);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'lang'   => 'painless',
+            'source' => "doc['name'].value",
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "source": "script source",
-                "lang": "painless"
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $script->toArray());
-        $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($script->isEmpty());
+        $this->assertSame($expected, $script->build());
     }
 
     /**
@@ -85,29 +98,30 @@ class ScriptTest extends TestCase
     public function it_builds_the_query_with_the_parameters_parameter()
     {
         $script = new Script();
-        $script->source('script source');
+        $script->source("doc['name'].value");
         $script->parameters([
             'multiplier' => 2,
         ]);
 
-        $expectedArray = [
-            'source'     => 'script source',
+        $sort = new Sort();
+        $sort->order('desc');
+        $sort->script($script);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->sort($sort);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'source'     => "doc['name'].value",
                 'params' => [
                 'multiplier' => 2,
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "source": "script source",
-                "params": {
-                    "multiplier": 2
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $script->toArray());
-        $this->assertSame($expectedJson, $script->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($script->isEmpty());
+        $this->assertSame($expected, $script->build());
     }
 
     /**
@@ -120,7 +134,7 @@ class ScriptTest extends TestCase
 
         $script = new Script();
 
-        $script->toArray();
+        $script->build();
     }
 
     /**
@@ -135,6 +149,6 @@ class ScriptTest extends TestCase
         $script->id('my id');
         $script->source('script source');
 
-        $script->toArray();
+        $script->build();
     }
 }

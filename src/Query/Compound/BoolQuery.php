@@ -1,93 +1,121 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Hypefactors\ElasticBuilder\Query\Compound;
 
-use Hypefactors\ElasticBuilder\Core\Util;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQuery;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\MustNotQuery;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\MustNotQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\MustQuery;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\MustQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\ShouldQuery;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\ShouldQueryInterface;
 use Hypefactors\ElasticBuilder\Query\Query;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html
  */
-class BoolQuery extends Query
+class BoolQuery extends Query implements BoolQueryInterface
 {
-    protected $queries = [];
+    private array $queries = [];
 
-    public function filter($queries): self
+    public function filter(callable | FilterQueryInterface $value): BoolQueryInterface
     {
-        $this->addQueries('filter', $queries);
+        if (is_callable($value)) {
+            $filterQuery = new FilterQuery();
+
+            $value($filterQuery);
+
+            return $this->filter($filterQuery);
+        }
+
+        if (! $value->isEmpty()) {
+            $this->queries['filter'][] = $value;
+        }
 
         return $this;
     }
 
-    public function must($queries): self
+    public function must(callable | MustQueryInterface $value): BoolQueryInterface
     {
-        $this->addQueries('must', $queries);
+        if (is_callable($value)) {
+            $mustQuery = new MustQuery();
+
+            $value($mustQuery);
+
+            return $this->must($mustQuery);
+        }
+
+        if (! $value->isEmpty()) {
+            $this->queries['must'][] = $value;
+        }
 
         return $this;
     }
 
-    public function mustNot($queries): self
+    public function mustNot(callable | MustNotQueryInterface $value): BoolQueryInterface
     {
-        $this->addQueries('must_not', $queries);
+        if (is_callable($value)) {
+            $mustNotQuery = new MustNotQuery();
+
+            $value($mustNotQuery);
+
+            return $this->mustNot($mustNotQuery);
+        }
+
+        if (! $value->isEmpty()) {
+            $this->queries['must_not'][] = $value;
+        }
 
         return $this;
     }
 
-    public function should($queries): self
+    public function should(callable | ShouldQueryInterface $value): BoolQueryInterface
     {
-        $this->addQueries('should', $queries);
+        if (is_callable($value)) {
+            $shouldQuery = new ShouldQuery();
+
+            $value($shouldQuery);
+
+            return $this->should($shouldQuery);
+        }
+
+        if (! $value->isEmpty()) {
+            $this->queries['should'][] = $value;
+        }
 
         return $this;
     }
 
-    public function minimumShouldMatch($minimumShouldMatch): self
+    public function minimumShouldMatch($minimumShouldMatch): BoolQueryInterface
     {
         $this->body['minimum_should_match'] = $minimumShouldMatch;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
-        $validClauseKeys = ['must', 'filter', 'must_not', 'should'];
-
-        $body = [];
+        $response = $this->body;
 
         foreach ($this->queries as $clause => $queries) {
-            if (in_array($clause, $validClauseKeys, true)) {
-                if (count($queries) === 1) {
-                    $body[$clause] = $queries[0]->toArray();
-                } else {
-                    foreach ($queries as $query) {
-                        $body[$clause][] = $query->toArray();
-                    }
+            if (count($queries) === 1) {
+                $response[$clause] = $queries[0]->build();
+            } else {
+                foreach ($queries as $query) {
+                    $response[$clause][] = $query->build();
                 }
             }
         }
 
-        return [
-            'bool' => array_merge($body, $this->body),
-        ];
-    }
-
-    protected function addQuery(string $clause, Query $query)
-    {
-        $this->queries[$clause][] = $query;
-
-        return $this;
-    }
-
-    protected function addQueries(string $clause, $queries)
-    {
-        foreach (Util::arrayWrap($queries) as $query) {
-            $this->addQuery($clause, $query);
+        if (empty($response)) {
+            return [];
         }
 
-        return $this;
+        return [
+            'bool' => $response,
+        ];
     }
 }
