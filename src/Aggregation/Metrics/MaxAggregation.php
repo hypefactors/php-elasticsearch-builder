@@ -5,25 +5,22 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Aggregation\Metrics;
 
 use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
+use Hypefactors\ElasticBuilder\Aggregation\AggregationInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
-use InvalidArgumentException;
+use RuntimeException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-aggregations-metrics-max-aggregation.html
  */
-final class MaxAggregation extends Aggregation
+class MaxAggregation extends Aggregation implements MaxAggregationInterface
 {
-    /**
-     * Returns the Aggregation body.
-     *
-     * @throws \InvalidArgumentException
-     */
+    public function aggregation(AggregationInterface $aggregation): AggregationInterface
+    {
+        throw new RuntimeException('Max Aggregations do not support sub-aggregations');
+    }
+
     public function getBody(): array
     {
-        if (! isset($this->body['field'])) {
-            throw new InvalidArgumentException('The "field" is required!');
-        }
-
         return [
             'max' => Util::recursivetoArray($this->body),
         ];

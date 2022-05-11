@@ -6,38 +6,24 @@ namespace Hypefactors\ElasticBuilder\Query;
 
 abstract class Query implements QueryInterface
 {
-    /**
-     * The DSL Query body.
-     *
-     * @var array
-     */
-    protected $body = [];
+    protected array $body = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function boost(float $factor): QueryInterface
+    public function boost(float $factor): self
     {
         $this->body['boost'] = $factor;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function name(string $name): QueryInterface
+    public function name(string $name): self
     {
         $this->body['_name'] = $name;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function toJson(int $options = 0): string
+    public function isEmpty(): bool
     {
-        return json_encode($this->toArray(), $options);
+        return empty($this->build());
     }
 }

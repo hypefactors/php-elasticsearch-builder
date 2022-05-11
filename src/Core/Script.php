@@ -7,9 +7,9 @@ namespace Hypefactors\ElasticBuilder\Core;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-scripting.html
  */
-final class Script implements ScriptInterface
+class Script implements ScriptInterface
 {
     /**
      * The parameters that will be used when building the Script response.
@@ -44,7 +44,12 @@ final class Script implements ScriptInterface
         return $this;
     }
 
-    public function toArray(): array
+    public function isEmpty(): bool
+    {
+        return empty($this->build());
+    }
+
+    public function build(): array
     {
         if (! isset($this->parameters['source']) && ! isset($this->parameters['id'])) {
             throw new InvalidArgumentException('The "source" or "id" is required!');
@@ -55,10 +60,5 @@ final class Script implements ScriptInterface
         }
 
         return Util::arrayWrap($this->parameters);
-    }
-
-    public function toJson(int $options = 0): string
-    {
-        return json_encode($this->toArray(), $options);
     }
 }

@@ -19,22 +19,13 @@ class MatchPhraseQueryTest extends TestCase
         $query->field('message');
         $query->query('this is a test');
 
-        $expectedArray = [
+        $expected = [
             'match_phrase' => [
                 'message' => 'this is a test',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_phrase": {
-                    "message": "this is a test"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -47,7 +38,7 @@ class MatchPhraseQueryTest extends TestCase
         $query->query('this is a test');
         $query->boost(1.5);
 
-        $expectedArray = [
+        $expected = [
             'match_phrase' => [
                 'message' => [
                     'query' => 'this is a test',
@@ -56,19 +47,7 @@ class MatchPhraseQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_phrase": {
-                    "message": {
-                        "query": "this is a test",
-                        "boost": 1.5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -81,7 +60,7 @@ class MatchPhraseQueryTest extends TestCase
         $query->query('this is a test');
         $query->name('my-query-name');
 
-        $expectedArray = [
+        $expected = [
             'match_phrase' => [
                 'message' => [
                     'query' => 'this is a test',
@@ -90,19 +69,7 @@ class MatchPhraseQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_phrase": {
-                    "message": {
-                        "query": "this is a test",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -115,7 +82,7 @@ class MatchPhraseQueryTest extends TestCase
         $query->query('this is a test');
         $query->slop(5);
 
-        $expectedArray = [
+        $expected = [
             'match_phrase' => [
                 'message' => [
                     'query' => 'this is a test',
@@ -124,19 +91,7 @@ class MatchPhraseQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "match_phrase": {
-                    "message": {
-                        "query": "this is a test",
-                        "slop": 5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 
     /**
@@ -148,7 +103,7 @@ class MatchPhraseQueryTest extends TestCase
         $this->expectExceptionMessage('The "field" is required!');
 
         $query = new MatchPhraseQuery();
-        $query->toArray();
+        $query->build();
     }
 
     /**
@@ -162,6 +117,6 @@ class MatchPhraseQueryTest extends TestCase
         $query = new MatchPhraseQuery();
         $query->field('message');
 
-        $query->toArray();
+        $query->build();
     }
 }

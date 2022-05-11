@@ -10,102 +10,49 @@ use InvalidArgumentException;
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html
  */
-class MatchPhrasePrefixQuery extends Query
+class MatchPhrasePrefixQuery extends Query implements MatchPhrasePrefixQueryInterface
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
-    /**
-     * Constructor.
-     *
-     * @param string|null $field
-     * @param mixed       $query
-     *
-     * @return void
-     */
-    public function __construct(?string $field = null, $query = null)
-    {
-        $field && $this->field($field);
-
-        $query && $this->query($query);
-    }
-
-    /**
-     * Sets the field to search on.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field(string $field): self
+    public function field(string $field): MatchPhrasePrefixQueryInterface
     {
         $this->field = $field;
 
         return $this;
     }
 
-    public function query($query): self
+    public function query($query): MatchPhrasePrefixQueryInterface
     {
         $this->body['query'] = $query;
 
         return $this;
     }
 
-    /**
-     * Analyzer used to convert text in the query value into tokens.
-     *
-     * @param string $analyzer
-     *
-     * @return $this
-     */
-    public function analyzer(string $analyzer): self
+    public function analyzer(string $analyzer): MatchPhrasePrefixQueryInterface
     {
         $this->body['analyzer'] = $analyzer;
 
         return $this;
     }
 
-    /**
-     * Maximum number of terms to which the last provided term of the query value will expand.
-     *
-     * @param int $maxExpansions
-     *
-     * @return $this
-     */
-    public function maxExpansions(int $maxExpansions): self
+    public function maxExpansions(int $maxExpansions): MatchPhrasePrefixQueryInterface
     {
         $this->body['max_expansions'] = $maxExpansions;
 
         return $this;
     }
 
-    /**
-     * Maximum number of positions allowed between matching tokens.
-     *
-     * @param int $slop
-     *
-     * @return $this
-     */
-    public function slop(int $slop): self
+    public function slop(int $slop): MatchPhrasePrefixQueryInterface
     {
         $this->body['slop'] = $slop;
 
         return $this;
     }
 
-    /**
-     * Indicates whether no documents are returned if the analyzer
-     * removes all tokens, such as when using a stop filter.
-     *
-     * @param string $status
-     *
-     * @return $this
-     */
-    public function zeroTermsQuery(string $status): self
+    public function zeroTermsQuery(string $status): MatchPhrasePrefixQueryInterface
     {
         $statusLower = strtolower($status);
 
@@ -120,14 +67,7 @@ class MatchPhrasePrefixQuery extends Query
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

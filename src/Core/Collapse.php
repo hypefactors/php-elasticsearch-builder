@@ -7,7 +7,7 @@ namespace Hypefactors\ElasticBuilder\Core;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/collapse-search-results.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/collapse-search-results.html
  */
 class Collapse implements CollapseInterface
 {
@@ -30,7 +30,7 @@ class Collapse implements CollapseInterface
             return $this->innerHits($innerHits);
         }
 
-        $this->body['inner_hits'] = $value->toArray();
+        $this->body['inner_hits'] = $value->build();
 
         return $this;
     }
@@ -47,17 +47,12 @@ class Collapse implements CollapseInterface
         return empty($this->body);
     }
 
-    public function toArray(): array
+    public function build(): array
     {
         if (! isset($this->body['field'])) {
             throw new InvalidArgumentException('The "field" is required!');
         }
 
         return Util::recursivetoArray($this->body);
-    }
-
-    public function toJson(int $options = 0): string
-    {
-        return json_encode($this->toArray(), $options);
     }
 }

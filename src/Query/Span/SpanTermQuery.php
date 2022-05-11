@@ -8,53 +8,30 @@ use Hypefactors\ElasticBuilder\Query\Query;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-term-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-span-term-query.html
  */
-class SpanTermQuery extends Query implements SpanQueryInterface
+class SpanTermQuery extends Query implements SpanTermQueryInterface
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
-    /**
-     * Sets the field to search on.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field(string $field): self
+    public function field(string $field): SpanTermQueryInterface
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Sets the value to search with.
-     *
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function value($value)
+    public function value(mixed $value): SpanTermQueryInterface
     {
         $this->body['value'] = $value;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

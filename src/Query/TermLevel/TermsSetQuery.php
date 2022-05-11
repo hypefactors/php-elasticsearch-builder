@@ -5,68 +5,61 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Query\TermLevel;
 
 use Hypefactors\ElasticBuilder\Query\Query;
+use RuntimeException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-set-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-terms-set-query.html
  */
-class TermsSetQuery extends Query
+class TermsSetQuery extends Query implements TermsSetQueryInterface
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
-    /**
-     * Sets the field to search on.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field($field): self
+    public function field($field): TermsSetQueryInterface
     {
         $this->field = $field;
 
         return $this;
     }
 
-    public function term(string $term): self
+    public function term(string $term): TermsSetQueryInterface
     {
         $this->body['terms'][] = $term;
 
         return $this;
     }
 
-    public function terms($terms): self
+    public function terms(array $terms): TermsSetQueryInterface
     {
         $this->body['terms'] = $terms;
 
         return $this;
     }
 
-    public function minimumShouldMatchField(string $fieldName): self
+    public function minimumShouldMatchField(string $fieldName): TermsSetQueryInterface
     {
         $this->body['minimum_should_match_field'] = $fieldName;
 
         return $this;
     }
 
-    public function minimumShouldMatchScript($script): self
+    public function minimumShouldMatchScript($script): TermsSetQueryInterface
     {
         $this->body['minimum_should_match_script'] = $script;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
+        if (! empty($this->body['terms'])) {
+            if (! isset($this->body['minimum_should_match_field']) && ! isset($this->body['minimum_should_match_script'])) {
+                throw new RuntimeException("When defining 'terms' the 'minimum_should_match_field' or 'minimum_should_match_script' should be defined.");
+            }
+        }
+
         return [
             'terms_set' => [
                 $this->field => $this->body,

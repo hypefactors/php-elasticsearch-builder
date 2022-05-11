@@ -6,10 +6,13 @@ namespace Hypefactors\ElasticBuilder\Tests\Core;
 
 use Hypefactors\ElasticBuilder\Core\Highlight;
 use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\MustQuery;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\ShouldQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\ExistsQuery;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 class HighlightTest extends TestCase
@@ -20,30 +23,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_chars_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->boundaryChars('.,!?');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'boundary_chars' => '.,!?',
             'fields'         => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "boundary_chars": ".,!?",
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -52,32 +51,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_chars_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->boundaryChars('.,!?', 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->boundaryChars('.,!?', 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'boundary_chars' => '.,!?',
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "boundary_chars": ".,!?"
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -86,30 +80,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_max_scan_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->boundaryMaxScan(5);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'boundary_max_scan' => 5,
             'fields'            => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "boundary_max_scan": 5,
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -118,32 +108,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_max_scan_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->boundaryMaxScan(5, 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->boundaryMaxScan(5, 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'boundary_max_scan' => 5,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "boundary_max_scan": 5
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -152,30 +137,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_scanner_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->boundaryScanner('chars');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'boundary_scanner' => 'chars',
             'fields'           => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "boundary_scanner": "chars",
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -184,32 +165,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_scanner_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->boundaryScanner('chars', 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->boundaryScanner('chars', 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'boundary_scanner' => 'chars',
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "boundary_scanner": "chars"
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -218,30 +194,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_scanner_locale_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->boundaryScannerLocale('en-US');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'boundary_scanner_locale' => 'en-US',
             'fields'                  => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "boundary_scanner_locale": "en-US",
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -250,32 +222,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_boundary_scanner_locale_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->boundaryScannerLocale('en-US', 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->boundaryScannerLocale('en-US', 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'boundary_scanner_locale' => 'en-US',
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "boundary_scanner_locale": "en-US"
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -284,30 +251,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_encoder()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->encoder('html');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'encoder' => 'html',
             'fields'  => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "encoder": "html",
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -316,24 +279,22 @@ class HighlightTest extends TestCase
     public function it_can_set_a_single_field()
     {
         $highlight = new Highlight();
-        $highlight->field('my-field');
+        $highlight->field('name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'my-field' => new stdClass(),
+                'name' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "my-field": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -342,27 +303,24 @@ class HighlightTest extends TestCase
     public function it_can_set_multiple_fields()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -372,32 +330,27 @@ class HighlightTest extends TestCase
     {
         $highlight = new Highlight();
         $highlight->fields([
-            'field-a' => (new Highlight())->numberOfFragments(1),
-            'field-b',
+            'name' => (new Highlight())->numberOfFragments(1),
+            'programming_languages',
         ]);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'number_of_fragments' => 1,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "number_of_fragments": 1
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -406,30 +359,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_force_source_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->forceSource(true);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'force_source' => true,
             'fields'       => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "force_source": true,
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -438,32 +387,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_force_source_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->forceSource(true, 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->forceSource(true, 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'force_source' => true,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "force_source": true
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -472,30 +416,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_fragmenter_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->fragmenter('simple');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fragmenter' => 'simple',
             'fields'     => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fragmenter": "simple",
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -504,63 +444,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_fragmenter_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->fragmenter('simple', 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->fragmenter('simple', 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'fragmenter' => 'simple',
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "fragmenter": "simple"
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_set_the_fragment_offset_globally()
-    {
-        $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->fragmentOffset(1);
-
-        $expectedArray = [
-            'type'            => 'fvh',
-            'fragment_offset' => 1,
-            'fields'          => [
-                'field-a' => new stdClass(),
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "type": "fvh",
-                "fragment_offset": 1,
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -569,34 +473,28 @@ class HighlightTest extends TestCase
     public function it_can_set_the_fragment_offset_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->fragmentOffset(1, 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->fragmentOffset(1, 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'type'            => 'fvh',
                     'fragment_offset' => 1,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "type": "fvh",
-                        "fragment_offset": 1
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -605,27 +503,24 @@ class HighlightTest extends TestCase
     public function it_can_set_the_fragment_size_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
+        $highlight->field('name');
         $highlight->fragmentSize(1);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fragment_size' => 1,
             'fields'        => [
-                'field-a' => new stdClass(),
+                'name' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fragment_size": 1,
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -634,32 +529,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_fragment_size_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->fragmentSize(1, 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->fragmentSize(1, 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'fragment_size' => 1,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "fragment_size": 1
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -667,27 +557,38 @@ class HighlightTest extends TestCase
      */
     public function it_can_set_the_highlight_query_globally()
     {
-        $existsQuery = new ExistsQuery();
-        $existsQuery->field('user');
-
         $termQuery = new TermQuery();
         $termQuery->field('user');
         $termQuery->value('john');
 
+        $mustQuery = new MustQuery();
+        $mustQuery->term($termQuery);
+
+        $existsQuery = new ExistsQuery();
+        $existsQuery->field('user');
+
+        $shouldQuery = new ShouldQuery();
+        $shouldQuery->exists($existsQuery);
+
         $boolQuery = new BoolQuery();
-        $boolQuery->must($termQuery);
-        $boolQuery->should($existsQuery);
+        $boolQuery->must($mustQuery);
+        $boolQuery->should($shouldQuery);
         $boolQuery->minimumShouldMatch(0);
 
         $highlight = new Highlight();
-        $highlight->field('field-a');
-
+        $highlight->field('name');
         $highlight->highlightQuery($boolQuery);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'highlight_query' => [
                 'bool' => [
-                    'must' => [
+                    'minimum_should_match' => 0,
+                    'must'                 => [
                         'term' => [
                             'user' => 'john',
                         ],
@@ -697,39 +598,16 @@ class HighlightTest extends TestCase
                             'field' => 'user',
                         ],
                     ],
-                    'minimum_should_match' => 0,
                 ],
             ],
             'fields' => [
-                'field-a' => new stdClass(),
+                'name' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "highlight_query": {
-                    "bool": {
-                        "must": {
-                            "term": {
-                                "user": "john"
-                            }
-                        },
-                        "should": {
-                            "exists": {
-                                "field": "user"
-                            }
-                        },
-                        "minimum_should_match": 0
-                    }
-                },
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -737,29 +615,40 @@ class HighlightTest extends TestCase
      */
     public function it_can_set_the_highlight_query_on_a_field()
     {
-        $existsQuery = new ExistsQuery();
-        $existsQuery->field('user');
-
         $termQuery = new TermQuery();
         $termQuery->field('user');
         $termQuery->value('john');
 
+        $mustQuery = new MustQuery();
+        $mustQuery->term($termQuery);
+
+        $existsQuery = new ExistsQuery();
+        $existsQuery->field('user');
+
+        $shouldQuery = new ShouldQuery();
+        $shouldQuery->exists($existsQuery);
+
         $boolQuery = new BoolQuery();
-        $boolQuery->must($termQuery);
-        $boolQuery->should($existsQuery);
+        $boolQuery->must($mustQuery);
+        $boolQuery->should($shouldQuery);
         $boolQuery->minimumShouldMatch(0);
 
         $highlight = new Highlight();
-        $highlight->field('field-a');
+        $highlight->field('name');
+        $highlight->highlightQuery($boolQuery, 'name');
 
-        $highlight->highlightQuery($boolQuery, 'field-a');
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
 
-        $expectedArray = [
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'highlight_query' => [
                         'bool' => [
-                            'must' => [
+                            'minimum_should_match' => 0,
+                            'must'                 => [
                                 'term' => [
                                     'user' => 'john',
                                 ],
@@ -769,39 +658,15 @@ class HighlightTest extends TestCase
                                     'field' => 'user',
                                 ],
                             ],
-                            'minimum_should_match' => 0,
                         ],
                     ],
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "highlight_query": {
-                            "bool": {
-                                "must": {
-                                    "term": {
-                                        "user": "john"
-                                    }
-                                },
-                                "should": {
-                                    "exists": {
-                                        "field": "user"
-                                    }
-                                },
-                                "minimum_should_match": 0
-                            }
-                        }
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertSame($expected, $highlight->build());
     }
 
     /**
@@ -810,38 +675,30 @@ class HighlightTest extends TestCase
     public function it_can_set_the_matched_fields_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->matchedFields(['something'], 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->matchedFields(['something'], 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'type'           => 'fvh',
                     'matched_fields' => [
                         'something',
                     ],
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "type": "fvh",
-                        "matched_fields": [
-                            "something"
-                        ]
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -850,32 +707,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_no_match_size_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->noMatchSize(1, 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->noMatchSize(1, 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'no_match_size' => 1,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "no_match_size": 1
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -884,27 +736,24 @@ class HighlightTest extends TestCase
     public function it_can_set_the_number_of_fragments_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
+        $highlight->field('name');
         $highlight->numberOfFragments(1);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'number_of_fragments' => 1,
             'fields'              => [
-                'field-a' => new stdClass(),
+                'name' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "number_of_fragments": 1,
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -913,32 +762,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_number_of_fragments_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->numberOfFragments(1, 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->numberOfFragments(1, 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'number_of_fragments' => 1,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "number_of_fragments": 1
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -947,27 +791,24 @@ class HighlightTest extends TestCase
     public function it_can_set_score_order_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
+        $highlight->field('name');
         $highlight->scoreOrder();
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'order'  => 'score',
             'fields' => [
-                'field-a' => new stdClass(),
+                'name' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "order": "score",
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -976,32 +817,27 @@ class HighlightTest extends TestCase
     public function it_can_set_score_order_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->scoreOrder('field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->scoreOrder('name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'order' => 'score',
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "order": "score"
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -1010,145 +846,81 @@ class HighlightTest extends TestCase
     public function it_can_set_the_phrase_limit()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->phraseLimit(10);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'phrase_limit' => 10,
             'fields'       => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "phrase_limit": 10,
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
      * @test
      */
-    public function it_can_set_pre_tags_globally()
+    public function it_can_set_pre_and_post_tags_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
+        $highlight->field('name');
         $highlight->preTags('<em>');
+        $highlight->postTags('</em>');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'pre_tags' => [
                 '<em>',
             ],
-            'fields' => [
-                'field-a' => new stdClass(),
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "pre_tags": [
-                    "<em>"
-                ],
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_set_pre_tags_on_a_field()
-    {
-        $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->preTags('<em>', 'field-a');
-
-        $expectedArray = [
-            'fields' => [
-                'field-a' => [
-                    'pre_tags' => [
-                        '<em>',
-                    ],
-                ],
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "pre_tags": [
-                            "<em>"
-                        ]
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_set_post_tags_globally()
-    {
-        $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->postTags('</em>');
-
-        $expectedArray = [
             'post_tags' => [
                 '</em>',
             ],
             'fields' => [
-                'field-a' => new stdClass(),
+                'name' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<JSON
-            {
-                "post_tags": [
-                    "<\/em>"
-                ],
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
      * @test
      */
-    public function it_can_set_post_tags_on_a_field()
+    public function it_can_set_pre_and_post_tags_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->postTags('</em>', 'field-a');
+        $highlight->field('name');
+        $highlight->preTags('<em>', 'name');
+        $highlight->postTags('</em>', 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
+                    'pre_tags' => [
+                        '<em>',
+                    ],
                     'post_tags' => [
                         '</em>',
                     ],
@@ -1156,20 +928,9 @@ class HighlightTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<JSON
-            {
-                "fields": {
-                    "field-a": {
-                        "post_tags": [
-                            "<\/em>"
-                        ]
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertSame($expected, $highlight->build());
     }
 
     /**
@@ -1178,30 +939,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_require_field_match_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->requireFieldMatch(true);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'require_field_match' => true,
             'fields'              => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "require_field_match": true,
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -1210,32 +967,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_require_field_match_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->requireFieldMatch(true, 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->requireFieldMatch(true, 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'require_field_match' => true,
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "require_field_match": true
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -1244,27 +996,24 @@ class HighlightTest extends TestCase
     public function it_can_set_tags_schema_as_styled()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
+        $highlight->field('name');
         $highlight->tagsSchema();
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'tags_schema' => 'styled',
             'fields'      => [
-                'field-a' => new stdClass(),
+                'name' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "tags_schema": "styled",
-                "fields": {
-                    "field-a": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -1273,30 +1022,26 @@ class HighlightTest extends TestCase
     public function it_can_set_the_type_globally()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
         $highlight->type('plain');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'type'   => 'plain',
             'fields' => [
-                'field-a' => new stdClass(),
-                'field-b' => new stdClass(),
+                'name' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "type": "plain",
-                "fields": {
-                    "field-a": {},
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**
@@ -1305,32 +1050,27 @@ class HighlightTest extends TestCase
     public function it_can_set_the_type_on_a_field()
     {
         $highlight = new Highlight();
-        $highlight->field('field-a');
-        $highlight->field('field-b');
-        $highlight->type('plain', 'field-a');
+        $highlight->field('name');
+        $highlight->field('programming_languages');
+        $highlight->type('plain', 'name');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->highlight($highlight);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'fields' => [
-                'field-a' => [
+                'name' => [
                     'type' => 'plain',
                 ],
-                'field-b' => new stdClass(),
+                'programming_languages' => new stdClass(),
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "fields": {
-                    "field-a": {
-                        "type": "plain"
-                    },
-                    "field-b": {}
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $highlight->toArray());
-        $this->assertSame($expectedJson, $highlight->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($highlight->isEmpty());
+        $this->assertEquals($expected, $highlight->build());
     }
 
     /**

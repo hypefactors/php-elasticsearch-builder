@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-interface CollapseInterface extends ArrayableInterface, JsonableInterface
+interface CollapseInterface extends ArrayableInterface
 {
     public function field(string $field): CollapseInterface;
 

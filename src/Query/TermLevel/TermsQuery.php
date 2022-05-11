@@ -8,67 +8,40 @@ use Hypefactors\ElasticBuilder\Query\Query;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-terms-query.html
  */
-class TermsQuery extends Query
+class TermsQuery extends Query implements TermsQueryInterface
 {
     /**
      * The field to be searched against.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
     /**
      * The terms that needs to match exactly on the field value.
-     *
-     * @var array
      */
-    protected $values = [];
+    private array $values = [];
 
     /**
      * The terms lookup values.
-     *
-     * @var array
      */
-    protected $termsLookup = [];
+    private array $termsLookup = [];
 
-    /**
-     * Sets the field to be searched against.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field(string $field): self
+    public function field(string $field): TermsQueryInterface
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Sets a term that needs to match on the field value.
-     *
-     * @param bool|int|string $value
-     *
-     * @return $this
-     */
-    public function value($value): self
+    public function value(bool | int | string $value): TermsQueryInterface
     {
         $this->values[] = $value;
 
         return $this;
     }
 
-    /**
-     * Sets multiple terms that needs to match on the field value.
-     *
-     * @param array $values
-     *
-     * @return $this
-     */
-    public function values(array $values): self
+    public function values(array $values): TermsQueryInterface
     {
         foreach ($values as $value) {
             $this->value($value);
@@ -77,85 +50,42 @@ class TermsQuery extends Query
         return $this;
     }
 
-    /**
-     * Terms lookup fetches the field values of an existing document.
-     *
-     * @param array $termsLookup
-     *
-     * @return $this
-     */
-    public function termsLookup(array $termsLookup): self
+    public function termsLookup(array $termsLookup): TermsQueryInterface
     {
         $this->termsLookup = $termsLookup;
 
         return $this;
     }
 
-    /**
-     * Sets the "name" of the index from which to fetch field values.
-     *
-     * @param string $index
-     *
-     * @return $this
-     */
-    public function index(string $index): self
+    public function index(string $index): TermsQueryInterface
     {
         $this->termsLookup['index'] = $index;
 
         return $this;
     }
 
-    /**
-     * Sets the "id" of the document from which to fetch field values.
-     *
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function id(string $id): self
+    public function id(string $id): TermsQueryInterface
     {
         $this->termsLookup['id'] = $id;
 
         return $this;
     }
 
-    /**
-     * Sets the name of the field from which to fetch field values.
-     *
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function path(string $path): self
+    public function path(string $path): TermsQueryInterface
     {
         $this->termsLookup['path'] = $path;
 
         return $this;
     }
 
-    /**
-     * Sets the custom routing value of the document
-     * from which to fetch term values.
-     *
-     * @param string $routing
-     *
-     * @return $this
-     */
-    public function routing(string $routing): self
+    public function routing(string $routing): TermsQueryInterface
     {
         $this->termsLookup['routing'] = $routing;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

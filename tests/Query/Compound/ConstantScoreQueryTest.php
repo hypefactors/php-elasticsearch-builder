@@ -20,7 +20,7 @@ class ConstantScoreQueryTest extends TestCase
         $query = new ConstantScoreQuery();
         $query->filter($termQuery);
 
-        $expectedArray = [
+        $expected = [
             'constant_score' => [
                 'filter' => [
                     'term' => [
@@ -30,19 +30,6 @@ class ConstantScoreQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "constant_score": {
-                    "filter": {
-                        "term": {
-                            "user": "john"
-                        }
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertSame($expected, $query->build());
     }
 }

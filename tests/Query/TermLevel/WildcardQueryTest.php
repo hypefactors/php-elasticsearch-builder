@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\WildcardQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class WildcardQueryTest extends TestCase
 {
@@ -15,26 +19,31 @@ class WildcardQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new WildcardQuery();
-        $query->field('user');
-        $query->value('john');
+        $wildcardQuery = new WildcardQuery();
+        $wildcardQuery->field('user');
+        $wildcardQuery->value('john');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($wildcardQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($wildcardQuery) {
+                $query->wildcard($wildcardQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'wildcard' => [
                 'user' => 'john',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "wildcard": {
-                    "user": "john"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($wildcardQuery->isEmpty());
+        $this->assertSame($expected, $wildcardQuery->build());
     }
 
     /**
@@ -42,12 +51,24 @@ class WildcardQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new WildcardQuery();
-        $query->field('user');
-        $query->value('john');
-        $query->boost(1.5);
+        $wildcardQuery = new WildcardQuery();
+        $wildcardQuery->field('user');
+        $wildcardQuery->value('john');
+        $wildcardQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($wildcardQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($wildcardQuery) {
+                $query->wildcard($wildcardQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'wildcard' => [
                 'user' => [
                     'value' => 'john',
@@ -56,19 +77,9 @@ class WildcardQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "wildcard": {
-                    "user": {
-                        "value": "john",
-                        "boost": 1.5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($wildcardQuery->isEmpty());
+        $this->assertSame($expected, $wildcardQuery->build());
     }
 
     /**
@@ -76,12 +87,24 @@ class WildcardQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new WildcardQuery();
-        $query->field('user');
-        $query->value('john');
-        $query->name('my-query-name');
+        $wildcardQuery = new WildcardQuery();
+        $wildcardQuery->field('user');
+        $wildcardQuery->value('john');
+        $wildcardQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($wildcardQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($wildcardQuery) {
+                $query->wildcard($wildcardQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'wildcard' => [
                 'user' => [
                     'value' => 'john',
@@ -90,19 +113,9 @@ class WildcardQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "wildcard": {
-                    "user": {
-                        "value": "john",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($wildcardQuery->isEmpty());
+        $this->assertSame($expected, $wildcardQuery->build());
     }
 
     /**
@@ -113,8 +126,8 @@ class WildcardQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new WildcardQuery();
-        $query->toArray();
+        $wildcardQuery = new WildcardQuery();
+        $wildcardQuery->build();
     }
 
     /**
@@ -125,9 +138,9 @@ class WildcardQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "value" is required!');
 
-        $query = new WildcardQuery();
-        $query->field('user');
+        $wildcardQuery = new WildcardQuery();
+        $wildcardQuery->field('user');
 
-        $query->toArray();
+        $wildcardQuery->build();
     }
 }

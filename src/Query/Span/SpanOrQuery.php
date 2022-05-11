@@ -8,37 +8,46 @@ use Hypefactors\ElasticBuilder\Core\Util;
 use Hypefactors\ElasticBuilder\Query\Query;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-or-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-span-or-query.html
  */
-class SpanOrQuery extends Query implements SpanQueryInterface
+class SpanOrQuery extends Query implements SpanOrQueryInterface
 {
     /**
      * The Span queries.
-     *
-     * @var array
      */
-    protected $queries = [];
+    private array $queries = [];
 
-    /**
-     * Adds a Span Query.
-     *
-     * @param \Hypefactors\ElasticBuilder\Query\Span\SpanQueryInterface $query
-     *
-     * @return $this
-     */
-    public function addQuery(SpanQueryInterface $query): self
+    public function spanTerm(callable | SpanTermQueryInterface $value): SpanOrQueryInterface
     {
-        $this->queries[] = $query;
+        if (is_callable($value)) {
+            $spanTermQuery = new SpanTermQuery();
+
+            $value($spanTermQuery);
+
+            return $this->spanTerm($spanTermQuery);
+        }
+
+        $this->queries[] = $value;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function spanNear(callable | SpanNearQueryInterface $value): SpanOrQueryInterface
+    {
+        if (is_callable($value)) {
+            $spanNearQuery = new SpanNearQuery();
+
+            $value($spanNearQuery);
+
+            return $this->spanNear($spanNearQuery);
+        }
+
+        $this->queries[] = $value;
+
+        return $this;
+    }
+
+    public function build(): array
     {
         $body = [];
 

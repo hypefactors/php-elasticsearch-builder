@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\Span;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\Span\SpanNearQuery;
 use Hypefactors\ElasticBuilder\Query\Span\SpanTermQuery;
-use PHPUnit\Framework\TestCase;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 
 class SpanNearQueryTest extends TestCase
 {
@@ -23,11 +27,19 @@ class SpanNearQueryTest extends TestCase
         $spanTermQuery2->field('field-2');
         $spanTermQuery2->value('value-2');
 
-        $query = new SpanNearQuery();
-        $query->addQuery($spanTermQuery1);
-        $query->addQuery($spanTermQuery2);
+        $spanNearQuery = new SpanNearQuery();
+        $spanNearQuery->spanTerm($spanTermQuery1);
+        $spanNearQuery->spanTerm($spanTermQuery2);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->spanNear($spanNearQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'span_near' => [
                 'clauses' => [
                     [
@@ -44,27 +56,9 @@ class SpanNearQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "span_near": {
-                    "clauses": [
-                        {
-                            "span_term": {
-                                "field-1": "value-1"
-                            }
-                        },
-                        {
-                            "span_term": {
-                                "field-2": "value-2"
-                            }
-                        }
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($spanNearQuery->isEmpty());
+        $this->assertSame($expected, $spanNearQuery->build());
     }
 
     /**
@@ -80,12 +74,20 @@ class SpanNearQueryTest extends TestCase
         $spanTermQuery2->field('field-2');
         $spanTermQuery2->value('value-2');
 
-        $query = new SpanNearQuery();
-        $query->addQuery($spanTermQuery1);
-        $query->addQuery($spanTermQuery2);
-        $query->slop(5);
+        $spanNearQuery = new SpanNearQuery();
+        $spanNearQuery->spanTerm($spanTermQuery1);
+        $spanNearQuery->spanTerm($spanTermQuery2);
+        $spanNearQuery->slop(5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->spanNear($spanNearQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'span_near' => [
                 'slop'    => 5,
                 'clauses' => [
@@ -103,28 +105,9 @@ class SpanNearQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "span_near": {
-                    "slop": 5,
-                    "clauses": [
-                        {
-                            "span_term": {
-                                "field-1": "value-1"
-                            }
-                        },
-                        {
-                            "span_term": {
-                                "field-2": "value-2"
-                            }
-                        }
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($spanNearQuery->isEmpty());
+        $this->assertSame($expected, $spanNearQuery->build());
     }
 
     /**
@@ -140,12 +123,20 @@ class SpanNearQueryTest extends TestCase
         $spanTermQuery2->field('field-2');
         $spanTermQuery2->value('value-2');
 
-        $query = new SpanNearQuery();
-        $query->addQuery($spanTermQuery1);
-        $query->addQuery($spanTermQuery2);
-        $query->inOrder(true);
+        $spanNearQuery = new SpanNearQuery();
+        $spanNearQuery->spanTerm($spanTermQuery1);
+        $spanNearQuery->spanTerm($spanTermQuery2);
+        $spanNearQuery->inOrder(true);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->spanNear($spanNearQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'span_near' => [
                 'in_order' => true,
                 'clauses'  => [
@@ -163,27 +154,8 @@ class SpanNearQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "span_near": {
-                    "in_order": true,
-                    "clauses": [
-                        {
-                            "span_term": {
-                                "field-1": "value-1"
-                            }
-                        },
-                        {
-                            "span_term": {
-                                "field-2": "value-2"
-                            }
-                        }
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($spanNearQuery->isEmpty());
+        $this->assertSame($expected, $spanNearQuery->build());
     }
 }

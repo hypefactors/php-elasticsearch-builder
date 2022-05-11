@@ -8,19 +8,19 @@ use Hypefactors\ElasticBuilder\Core\ScriptInterface;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-aggregations.html
  */
 abstract class Aggregation implements AggregationInterface
 {
     /**
-     * The Aggregation name.
-     */
-    protected string | null $name = null;
-
-    /**
      * The Aggregation body.
      */
     protected array $body = [];
+
+    /**
+     * The Aggregation name.
+     */
+    protected string | null $name = null;
 
     /**
      * The Aggregation Metadata.
@@ -67,22 +67,29 @@ abstract class Aggregation implements AggregationInterface
         return $this;
     }
 
-    public function toArray(): array
+    public function isEmpty(): bool
+    {
+        return empty($this->build());
+    }
+
+    public function build(): array
     {
         if (! $this->name) {
             throw new InvalidArgumentException('The Aggregation "name" is required!');
         }
 
+        if (! isset($this->body['field'])) {
+            throw new InvalidArgumentException('The "field" is required!');
+        }
+
         $body = $this->getBody();
 
         if (! empty($this->nestedAggregations)) {
-            $nestedAggregations = [];
+            $body['aggs'] = [];
 
             foreach ($this->nestedAggregations as $nestedAggregation) {
-                $nestedAggregations += $nestedAggregation->toArray();
+                $body['aggs'] += $nestedAggregation->build();
             }
-
-            $body['aggs'] = $nestedAggregations;
         }
 
         if (! empty($this->meta)) {
@@ -92,10 +99,5 @@ abstract class Aggregation implements AggregationInterface
         return [
             $this->name => $body,
         ];
-    }
-
-    public function toJson(int $options = 0): string
-    {
-        return json_encode($this->toArray(), $options);
     }
 }

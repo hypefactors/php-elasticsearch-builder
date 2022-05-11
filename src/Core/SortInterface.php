@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-interface SortInterface extends ArrayableInterface, JsonableInterface
+interface SortInterface extends ArrayableInterface
 {
     /**
      * The field to be sorted.

@@ -8,67 +8,44 @@ use Hypefactors\ElasticBuilder\Query\Query;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-prefix-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-prefix-query.html
  */
-class PrefixQuery extends Query
+class PrefixQuery extends Query implements PrefixQueryInterface
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
-    /**
-     * Sets the field to search on.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field(string $field): self
+    public function field(string $field): PrefixQueryInterface
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Method used to rewrite the query.
-     *
-     * @param string $value
-     *
-     * @return $this
-     */
-    public function rewrite($value)
-    {
-        $this->body['rewrite'] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Sets the value to search with.
-     *
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function value($value)
+    public function value($value): PrefixQueryInterface
     {
         $this->body['value'] = $value;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function rewrite(string $value): PrefixQueryInterface
+    {
+        $this->body['rewrite'] = $value;
+
+        return $this;
+    }
+
+    public function caseInsensitive(bool $status): PrefixQueryInterface
+    {
+        $this->body['case_insensitive'] = $status;
+
+        return $this;
+    }
+
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

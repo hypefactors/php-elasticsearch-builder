@@ -8,9 +8,9 @@ use Hypefactors\ElasticBuilder\Query\QueryInterface;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/highlighting.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/highlighting.html
  */
-final class Highlight implements HighlightInterface
+class Highlight implements HighlightInterface
 {
     /**
      * The parameters that will be used when building the Highlight response.
@@ -145,7 +145,7 @@ final class Highlight implements HighlightInterface
         return $this;
     }
 
-    public function fragmentOffset(int $offset, string | null $field = null): HighlightInterface
+    public function fragmentOffset(int $offset, string $field): HighlightInterface
     {
         $this->type('fvh', $field);
 
@@ -250,7 +250,12 @@ final class Highlight implements HighlightInterface
         return $this;
     }
 
-    public function toArray(): array
+    public function isEmpty(): bool
+    {
+        return empty($this->build());
+    }
+
+    public function build(): array
     {
         $parameters = Util::recursivetoArray($this->parameters);
 
@@ -259,11 +264,6 @@ final class Highlight implements HighlightInterface
         return array_merge($parameters, array_filter([
             'fields' => $fields,
         ]));
-    }
-
-    public function toJson(int $options = 0): string
-    {
-        return json_encode($this->toArray(), $options);
     }
 
     /**

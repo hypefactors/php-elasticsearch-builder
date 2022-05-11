@@ -14,10 +14,8 @@ class MatchQuery extends Query
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
     public function cutOffFrequency($frequency): self
     {
@@ -121,21 +119,14 @@ class MatchQuery extends Query
         return $this;
     }
 
-    public function query($query): self
+    public function query(array | string $query): self
     {
         $this->body['query'] = $query;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

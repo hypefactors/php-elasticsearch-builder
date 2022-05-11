@@ -14,10 +14,8 @@ class MatchPhraseQuery extends Query
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
     /**
      * Constructor.
@@ -27,7 +25,7 @@ class MatchPhraseQuery extends Query
      *
      * @return void
      */
-    public function __construct(?string $field = null, $query = null)
+    public function __construct(string | null $field = null, $query = null)
     {
         $field && $this->field($field);
 
@@ -76,14 +74,7 @@ class MatchPhraseQuery extends Query
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

@@ -6,7 +6,7 @@ namespace Hypefactors\ElasticBuilder\Core;
 
 use Hypefactors\ElasticBuilder\Query\QueryInterface;
 
-interface HighlightInterface extends ArrayableInterface, JsonableInterface
+interface HighlightInterface extends ArrayableInterface
 {
     /**
      * A string that contains each boundary character.
@@ -56,7 +56,7 @@ interface HighlightInterface extends ArrayableInterface, JsonableInterface
     /**
      * Controls the margin from which you want to start highlighting.
      */
-    public function fragmentOffset(int $offset, string | null $field = null): HighlightInterface;
+    public function fragmentOffset(int $offset, string $field): HighlightInterface;
 
     /**
      * The size of the highlighted fragment in characters.

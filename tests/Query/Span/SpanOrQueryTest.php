@@ -6,7 +6,9 @@ namespace Hypefactors\ElasticBuilder\Tests\Query\Span;
 
 use Hypefactors\ElasticBuilder\Query\Span\SpanOrQuery;
 use Hypefactors\ElasticBuilder\Query\Span\SpanTermQuery;
-use PHPUnit\Framework\TestCase;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 
 class SpanOrQueryTest extends TestCase
 {
@@ -23,11 +25,19 @@ class SpanOrQueryTest extends TestCase
         $spanTermQuery2->field('field-2');
         $spanTermQuery2->value('value-2');
 
-        $query = new SpanOrQuery();
-        $query->addQuery($spanTermQuery1);
-        $query->addQuery($spanTermQuery2);
+        $spanOrQuery = new SpanOrQuery();
+        $spanOrQuery->spanTerm($spanTermQuery1);
+        $spanOrQuery->spanTerm($spanTermQuery2);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->spanOr($spanOrQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'span_or' => [
                 'clauses' => [
                     [
@@ -44,26 +54,8 @@ class SpanOrQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "span_or": {
-                    "clauses": [
-                        {
-                            "span_term": {
-                                "field-1": "value-1"
-                            }
-                        },
-                        {
-                            "span_term": {
-                                "field-2": "value-2"
-                            }
-                        }
-                    ]
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($spanOrQuery->isEmpty());
+        $this->assertSame($expected, $spanOrQuery->build());
     }
 }

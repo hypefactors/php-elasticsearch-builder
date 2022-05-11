@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\TermQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class TermQueryTest extends TestCase
 {
@@ -15,26 +19,31 @@ class TermQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new TermQuery();
-        $query->field('user');
-        $query->value('john');
+        $termQuery = new TermQuery();
+        $termQuery->field('user');
+        $termQuery->value('john');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termQuery) {
+                $query->term($termQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'term' => [
                 'user' => 'john',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "term": {
-                    "user": "john"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termQuery->isEmpty());
+        $this->assertSame($expected, $termQuery->build());
     }
 
     /**
@@ -42,12 +51,24 @@ class TermQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new TermQuery();
-        $query->field('user');
-        $query->value('john');
-        $query->boost(1.5);
+        $termQuery = new TermQuery();
+        $termQuery->field('user');
+        $termQuery->value('john');
+        $termQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termQuery) {
+                $query->term($termQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'term' => [
                 'user' => [
                     'value' => 'john',
@@ -56,19 +77,9 @@ class TermQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "term": {
-                    "user": {
-                        "value": "john",
-                        "boost": 1.5
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termQuery->isEmpty());
+        $this->assertSame($expected, $termQuery->build());
     }
 
     /**
@@ -76,12 +87,24 @@ class TermQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new TermQuery();
-        $query->field('user');
-        $query->value('john');
-        $query->name('my-query-name');
+        $termQuery = new TermQuery();
+        $termQuery->field('user');
+        $termQuery->value('john');
+        $termQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($termQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($termQuery) {
+                $query->term($termQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'term' => [
                 'user' => [
                     'value' => 'john',
@@ -90,19 +113,9 @@ class TermQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "term": {
-                    "user": {
-                        "value": "john",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($termQuery->isEmpty());
+        $this->assertSame($expected, $termQuery->build());
     }
 
     /**
@@ -113,8 +126,8 @@ class TermQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new TermQuery();
-        $query->toArray();
+        $termQuery = new TermQuery();
+        $termQuery->build();
     }
 
     /**
@@ -125,9 +138,9 @@ class TermQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "value" is required!');
 
-        $query = new TermQuery();
-        $query->field('user');
+        $termQuery = new TermQuery();
+        $termQuery->field('user');
 
-        $query->toArray();
+        $termQuery->build();
     }
 }

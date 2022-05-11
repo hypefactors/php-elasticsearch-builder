@@ -8,41 +8,23 @@ use Hypefactors\ElasticBuilder\Query\Query;
 use InvalidArgumentException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/query-dsl-regexp-query.html
  */
-class RegexpQuery extends Query
+class RegexpQuery extends Query implements RegexpQueryInterface
 {
     /**
      * The field to search on.
-     *
-     * @var string
      */
-    protected $field;
+    private string | null $field = null;
 
-    /**
-     * Sets the field to search on.
-     *
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function field(string $field): self
+    public function field(string $field): RegexpQueryInterface
     {
         $this->field = $field;
 
         return $this;
     }
 
-    /**
-     * Enables optional operators for the regular expression.
-     *
-     * @param array|string $flags
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return $this
-     */
-    public function flags($flags): self
+    public function flags(array | string $flags): RegexpQueryInterface
     {
         if (is_string($flags)) {
             $flags = explode('|', $flags);
@@ -50,7 +32,14 @@ class RegexpQuery extends Query
 
         $flags = array_map('strtoupper', $flags);
 
-        $validFlags = ['ANYSTRING', 'COMPLEMENT', 'EMPTY', 'INTERSECTION', 'INTERVAL', 'NONE'];
+        $validFlags = [
+            'ANYSTRING',
+            'COMPLEMENT',
+            'EMPTY',
+            'INTERSECTION',
+            'INTERVAL',
+            'NONE',
+        ];
 
         $invalidFlags = array_diff($flags, $validFlags);
 
@@ -63,56 +52,28 @@ class RegexpQuery extends Query
         return $this;
     }
 
-    /**
-     * Maximum number of automaton states required for the query.
-     *
-     * @param int $value
-     *
-     * @return $this
-     */
-    public function maxDeterminizedStates(int $value)
+    public function maxDeterminizedStates(int $value): RegexpQueryInterface
     {
         $this->body['max_determinized_states'] = $value;
 
         return $this;
     }
 
-    /**
-     * Method used to rewrite the query.
-     *
-     * @param string $value
-     *
-     * @return $this
-     */
-    public function rewrite($value)
+    public function rewrite(string $value): RegexpQueryInterface
     {
         $this->body['rewrite'] = $value;
 
         return $this;
     }
 
-    /**
-     * Sets the value to search with.
-     *
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function value($value)
+    public function value(mixed $value): RegexpQueryInterface
     {
         $this->body['value'] = $value;
 
         return $this;
     }
 
-    /**
-     * Returns the DSL Query as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return array
-     */
-    public function toArray(): array
+    public function build(): array
     {
         if (! $this->field) {
             throw new InvalidArgumentException('The "field" is required!');

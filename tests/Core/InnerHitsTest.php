@@ -4,35 +4,20 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Core;
 
-use Hypefactors\ElasticBuilder\Core\InnerHits;
-use Hypefactors\ElasticBuilder\Core\Sort;
-use Hypefactors\ElasticBuilder\Core\SortInterface;
+use Hypefactors\ElasticBuilder\Core\Collapse;
 use Hypefactors\ElasticBuilder\Core\Highlight;
 use Hypefactors\ElasticBuilder\Core\HighlightInterface;
+use Hypefactors\ElasticBuilder\Core\InnerHits;
 use Hypefactors\ElasticBuilder\Core\Script;
 use Hypefactors\ElasticBuilder\Core\ScriptInterface;
-use PHPUnit\Framework\TestCase;
+use Hypefactors\ElasticBuilder\Core\Sort;
+use Hypefactors\ElasticBuilder\Core\SortInterface;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use stdClass;
 
 class InnerHitsTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function it_can_return_empty_body()
-    {
-        $innerHits = new InnerHits();
-
-        $expectedArray = [];
-
-        $expectedJson = <<<'JSON'
-            []
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
-    }
-
     /**
      * @test
      */
@@ -41,18 +26,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->from(1);
 
-        $expectedArray = [
-            'from' => 1
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'from' => 1,
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "from": 1
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -63,18 +53,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->from(1);
 
-        $expectedArray = [
-            'from' => '1'
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'from' => '1',
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "from": 1
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -85,18 +80,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->size(1);
 
-        $expectedArray = [
-            'size' => 1
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'size' => 1,
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "size": 1
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -107,18 +107,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->size(1);
 
-        $expectedArray = [
-            'size' => '1'
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
+            'size' => '1',
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "size": 1
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -128,36 +133,34 @@ class InnerHitsTest extends TestCase
     {
         $innerHits = new InnerHits();
         $innerHits->sort(function (SortInterface $sort) {
-            $sort->field('my-field-1');
+            $sort->field('name');
             $sort->order('asc');
         });
         $innerHits->sort(function (SortInterface $sort) {
-            $sort->field('my-field-2');
+            $sort->field('programming_languages');
             $sort->order('desc');
         });
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'sort' => [
-                ['my-field-1' => 'asc'],
-                ['my-field-2' => 'desc'],
+                ['name' => 'asc'],
+                ['programming_languages' => 'desc'],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "sort": [
-                    {
-                        "my-field-1": "asc"
-                    },
-                    {
-                        "my-field-2": "desc"
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -166,39 +169,37 @@ class InnerHitsTest extends TestCase
     public function it_can_apply_a_sort_using_a_sort_object()
     {
         $sort1 = new Sort();
-        $sort1->field('my-field-1');
+        $sort1->field('name');
         $sort1->order('asc');
 
         $sort2 = new Sort();
-        $sort2->field('my-field-2');
+        $sort2->field('programming_languages');
         $sort2->order('desc');
 
         $innerHits = new InnerHits();
         $innerHits->sort($sort1);
         $innerHits->sort($sort2);
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'sort' => [
-                ['my-field-1' => 'asc'],
-                ['my-field-2' => 'desc'],
+                ['name' => 'asc'],
+                ['programming_languages' => 'desc'],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "sort": [
-                    {
-                        "my-field-1": "asc"
-                    },
-                    {
-                        "my-field-2": "desc"
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -209,18 +210,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->name('Some Name');
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'name' => 'Some Name',
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "name": "Some Name"
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -230,29 +236,30 @@ class InnerHitsTest extends TestCase
     {
         $innerHits = new InnerHits();
         $innerHits->highlight(function (HighlightInterface $highlight) {
-            $highlight->field('my-field');
+            $highlight->field('name');
         });
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'highlight' => [
                 'fields' => [
-                    'my-field' => new stdClass(),
+                    'name' => new stdClass(),
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "highlight": {
-                    "fields": {
-                        "my-field": {}
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -261,31 +268,32 @@ class InnerHitsTest extends TestCase
     public function it_can_apply_a_highlight_using_a_sort_object()
     {
         $highlight = new Highlight();
-        $highlight->field('my-field');
+        $highlight->field('name');
 
         $innerHits = new InnerHits();
         $innerHits->highlight($highlight);
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'highlight' => [
                 'fields' => [
-                    'my-field' => new stdClass(),
+                    'name' => new stdClass(),
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "highlight": {
-                    "fields": {
-                        "my-field": {}
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -296,18 +304,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->explain(true);
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'explain' => true,
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "explain": true
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -318,18 +331,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->source(false);
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             '_source' => false,
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "_source": false
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -340,18 +358,23 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->source('some-field');
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             '_source' => 'some-field',
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "_source": "some-field"
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
     /**
@@ -365,89 +388,92 @@ class InnerHitsTest extends TestCase
             'field-two',
         ]);
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             '_source' => [
                 'field-one',
                 'field-two',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "_source": [
-                    "field-one",
-                    "field-two"
-                ]
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
-    }
-    /**
-     * @test
-     */
-    public function it_can_apply_a_script_as_a_callable()
-    {
-        $innerHits = new InnerHits();
-        $innerHits->script(function (ScriptInterface $script) {
-            $script->source('my-field');
-        });
-
-        $expectedArray = [
-            'script_fields' => [
-                [
-                    'source' => 'my-field',
-                ],
-            ],
-        ];
-
-        $expectedJson = <<<'JSON'
-            {
-                "script_fields": [
-                    {
-                        "source": "my-field"
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 
-    /**
-     * @test
-     */
-    public function it_can_apply_a_script_using_a_sort_object()
-    {
-        $script = new Script();
-        $script->source('my-field');
+    // /**
+    //  * @test
+    //  */
+    // public function it_can_apply_a_script_as_a_callable()
+    // {
+    //     $innerHits = new InnerHits();
+    //     $innerHits->script(function (ScriptInterface $script) {
+    //         $script->source('name');
+    //     });
 
-        $innerHits = new InnerHits();
-        $innerHits->script($script);
+    //     $collapseQuery = new Collapse();
+    //     $collapseQuery->field('name');
+    //     $collapseQuery->innerHits($innerHits);
 
-        $expectedArray = [
-            'script_fields' => [
-                [
-                    'source' => 'my-field',
-                ],
-            ],
-        ];
+    //     $builder = (new RequestBuilder())
+    //         ->collapse($collapseQuery);
+    //     ;
 
-        $expectedJson = <<<'JSON'
-            {
-                "script_fields": [
-                    {
-                        "source": "my-field"
-                    }
-                ]
-            }
-            JSON;
+    //     $response = $this->client->search($requestBuilder->build());
 
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
-    }
+    //     $expected = [
+    //         'script_fields' => [
+    //             [
+    //                 'source' => 'name',
+    //             ],
+    //         ],
+    //     ];
+
+    //     $this->assertArrayHasKey('took', $response);
+    //     $this->assertEquals($expected, $innerHits->build());
+    // }
+
+    // /**
+    //  * @test
+    //  */
+    // public function it_can_apply_a_script_using_a_sort_object()
+    // {
+    //     $script = new Script();
+    //     $script->source('name');
+
+    //     $innerHits = new InnerHits();
+    //     $innerHits->script($script);
+
+    //     $collapseQuery = new Collapse();
+    //     $collapseQuery->field('name');
+    //     $collapseQuery->innerHits($innerHits);
+
+    //     $builder = (new RequestBuilder())
+    //         ->collapse($collapseQuery);
+    //     ;
+
+    //     $response = $this->client->search($requestBuilder->build());
+
+    //     $expected = [
+    //         'script_fields' => [
+    //             [
+    //                 'source' => 'name',
+    //             ],
+    //         ],
+    //     ];
+
+    //     $this->assertArrayHasKey('took', $response);
+    //     $this->assertEquals($expected, $innerHits->build());
+    // }
 
     /**
      * @test
@@ -455,35 +481,33 @@ class InnerHitsTest extends TestCase
     public function it_can_set_a_docvalue_field()
     {
         $innerHits = new InnerHits();
-        $innerHits->docValueField('my-field-1');
-        $innerHits->docValueField('my-field-2', 'epoch_millis');
+        $innerHits->docValueField('name');
+        $innerHits->docValueField('programming_languages', 'epoch_millis');
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'docvalue_fields' => [
-                'my-field-1',
+                'name',
                 [
-                    'field'  => 'my-field-2',
+                    'field'  => 'programming_languages',
                     'format' => 'epoch_millis',
                 ],
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "docvalue_fields": [
-                    "my-field-1",
-                    {
-                        "field": "my-field-2",
-                        "format": "epoch_millis"
-                    }
-                ]
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
-
 
     /**
      * @test
@@ -493,17 +517,22 @@ class InnerHitsTest extends TestCase
         $innerHits = new InnerHits();
         $innerHits->version(true);
 
-        $expectedArray = [
+        $collapseQuery = new Collapse();
+        $collapseQuery->field('name');
+        $collapseQuery->innerHits($innerHits);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->index('ci-index');
+        $requestBuilder->collapse($collapseQuery);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'version' => true,
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "version": true
-            }
-            JSON;
-
-        $this->assertEquals($expectedArray, $innerHits->toArray());
-        $this->assertSame($expectedJson, $innerHits->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($innerHits->isEmpty());
+        $this->assertEquals($expected, $innerHits->build());
     }
 }

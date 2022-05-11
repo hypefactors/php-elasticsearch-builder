@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Core;
 
-interface InnerHitsInterface extends ArrayableInterface, JsonableInterface
+interface InnerHitsInterface extends ArrayableInterface
 {
     /**
      * The offset from where the first hit to fetch for each

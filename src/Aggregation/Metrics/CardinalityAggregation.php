@@ -8,16 +8,19 @@ use Hypefactors\ElasticBuilder\Aggregation\Aggregation;
 use Hypefactors\ElasticBuilder\Aggregation\AggregationInterface;
 use Hypefactors\ElasticBuilder\Core\Util;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html#search-aggregations-metrics-cardinality-aggregation.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-aggregations-metrics-cardinality-aggregation.html#search-aggregations-metrics-cardinality-aggregation.html
  */
-final class CardinalityAggregation extends Aggregation
+class CardinalityAggregation extends Aggregation implements CardinalityAggregationInterface
 {
+    public function aggregation(AggregationInterface $aggregation): AggregationInterface
+    {
+        throw new RuntimeException('Cardinality Aggregations do not support sub-aggregations');
+    }
+
     /**
-     * The precision_threshold options allows to trade memory for accuracy, and defines
-     * a unique count below which counts are expected to be close to accurate.
-     *
      * @throws \InvalidArgumentException
      */
     public function precision(int $precisionThreshold): AggregationInterface
@@ -31,17 +34,8 @@ final class CardinalityAggregation extends Aggregation
         return $this;
     }
 
-    /**
-     * Returns the Aggregation body.
-     *
-     * @throws \InvalidArgumentException
-     */
     public function getBody(): array
     {
-        if (! isset($this->body['field'])) {
-            throw new InvalidArgumentException('The "field" is required!');
-        }
-
         return [
             'cardinality' => Util::recursivetoArray($this->body),
         ];

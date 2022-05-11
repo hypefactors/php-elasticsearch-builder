@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Aggregation\Metrics;
 
 use Hypefactors\ElasticBuilder\Aggregation\Metrics\MaxAggregation;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class MaxAggregationTest extends TestCase
 {
@@ -19,7 +21,12 @@ class MaxAggregationTest extends TestCase
         $aggregation->name('genres');
         $aggregation->field('genre');
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->aggregation($aggregation);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'genres' => [
                 'max' => [
                     'field' => 'genre',
@@ -27,7 +34,8 @@ class MaxAggregationTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedArray, $aggregation->toArray());
+        $this->assertArrayHasKey('took', $response);
+        $this->assertSame($expected, $aggregation->build());
     }
 
     /**
@@ -42,7 +50,12 @@ class MaxAggregationTest extends TestCase
             'foo' => 'bar',
         ]);
 
-        $expectedArray = [
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->aggregation($aggregation);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'genres' => [
                 'max' => [
                     'field' => 'genre',
@@ -53,14 +66,18 @@ class MaxAggregationTest extends TestCase
             ],
         ];
 
-        $this->assertSame($expectedArray, $aggregation->toArray());
+        $this->assertArrayHasKey('took', $response);
+        $this->assertSame($expected, $aggregation->build());
     }
 
     /**
      * @test
      */
-    public function it_can_have_a_single_nested_aggregation()
+    public function an_exception_will_be_thrown_when_using_sub_aggregations()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Max Aggregations do not support sub-aggregations');
+
         $aggregation1 = new MaxAggregation();
         $aggregation1->name('genres');
         $aggregation1->field('genre');
@@ -71,65 +88,11 @@ class MaxAggregationTest extends TestCase
 
         $aggregation1->aggregation($aggregation2);
 
-        $expectedArray = [
-            'genres' => [
-                'max' => [
-                    'field' => 'genre',
-                ],
-                'aggs' => [
-                    'colors' => [
-                        'max' => [
-                            'field' => 'color',
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $builder = (new RequestBuilder())
+            ->aggregation($aggregation1)
+        ;
 
-        $this->assertSame($expectedArray, $aggregation1->toArray());
-    }
-
-    /**
-     * @test
-     */
-    public function it_can_have_multiple_nested_aggregation()
-    {
-        $aggregation1 = new MaxAggregation();
-        $aggregation1->name('genres');
-        $aggregation1->field('genre');
-
-        $aggregation2 = new MaxAggregation();
-        $aggregation2->name('colors_1');
-        $aggregation2->field('color');
-
-        $aggregation3 = new MaxAggregation();
-        $aggregation3->name('colors_2');
-        $aggregation3->field('color');
-
-        $aggregation1->aggregation($aggregation2);
-        $aggregation1->aggregation($aggregation3);
-
-        $expectedArray = [
-            'genres' => [
-                'max' => [
-                    'field' => 'genre',
-                ],
-                'aggs' => [
-                    'colors_1' => [
-                        'max' => [
-                            'field' => 'color',
-                        ],
-                    ],
-                    'colors_2' => [
-                        'max' => [
-                            'field' => 'color',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $this->assertSame($expectedArray, $aggregation1->toArray());
+        $this->client->search($requestBuilder->build());
     }
 
     /**
@@ -141,7 +104,7 @@ class MaxAggregationTest extends TestCase
         $this->expectExceptionMessage('The Aggregation "name" is required!');
 
         $aggregation = new MaxAggregation();
-        $aggregation->toArray();
+        $aggregation->build();
     }
 
     /**
@@ -154,6 +117,6 @@ class MaxAggregationTest extends TestCase
 
         $aggregation = new MaxAggregation();
         $aggregation->name('genres');
-        $aggregation->toArray();
+        $aggregation->build();
     }
 }

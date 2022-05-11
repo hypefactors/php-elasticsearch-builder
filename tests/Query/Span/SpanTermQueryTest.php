@@ -5,8 +5,10 @@ declare(strict_types = 1);
 namespace Hypefactors\ElasticBuilder\Tests\Query\Span;
 
 use Hypefactors\ElasticBuilder\Query\Span\SpanTermQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class SpanTermQueryTest extends TestCase
 {
@@ -15,26 +17,27 @@ class SpanTermQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new SpanTermQuery();
-        $query->field('user');
-        $query->value('kimchy');
+        $spanTermQuery = new SpanTermQuery();
+        $spanTermQuery->field('user');
+        $spanTermQuery->value('kimchy');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->spanTerm($spanTermQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'span_term' => [
                 'user' => 'kimchy',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "span_term": {
-                    "user": "kimchy"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($spanTermQuery->isEmpty());
+        $this->assertSame($expected, $spanTermQuery->build());
     }
 
     /**
@@ -42,12 +45,20 @@ class SpanTermQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new SpanTermQuery();
-        $query->field('user');
-        $query->value('kimchy');
-        $query->boost(1.0);
+        $spanTermQuery = new SpanTermQuery();
+        $spanTermQuery->field('user');
+        $spanTermQuery->value('kimchy');
+        $spanTermQuery->boost(1.0);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->spanTerm($spanTermQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'span_term' => [
                 'user' => [
                     'value' => 'kimchy',
@@ -56,19 +67,9 @@ class SpanTermQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "span_term": {
-                    "user": {
-                        "value": "kimchy",
-                        "boost": 1
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($spanTermQuery->isEmpty());
+        $this->assertSame($expected, $spanTermQuery->build());
     }
 
     /**
@@ -76,12 +77,20 @@ class SpanTermQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new SpanTermQuery();
-        $query->field('user');
-        $query->value('kimchy');
-        $query->name('my-query-name');
+        $spanTermQuery = new SpanTermQuery();
+        $spanTermQuery->field('user');
+        $spanTermQuery->value('kimchy');
+        $spanTermQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->spanTerm($spanTermQuery);
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'span_term' => [
                 'user' => [
                     'value' => 'kimchy',
@@ -90,19 +99,9 @@ class SpanTermQueryTest extends TestCase
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "span_term": {
-                    "user": {
-                        "value": "kimchy",
-                        "_name": "my-query-name"
-                    }
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($spanTermQuery->isEmpty());
+        $this->assertSame($expected, $spanTermQuery->build());
     }
 
     /**
@@ -113,8 +112,8 @@ class SpanTermQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new SpanTermQuery();
-        $query->toArray();
+        $spanTermQuery = new SpanTermQuery();
+        $spanTermQuery->build();
     }
 
     /**
@@ -125,9 +124,9 @@ class SpanTermQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "value" is required!');
 
-        $query = new SpanTermQuery();
-        $query->field('user');
+        $spanTermQuery = new SpanTermQuery();
+        $spanTermQuery->field('user');
 
-        $query->toArray();
+        $spanTermQuery->build();
     }
 }

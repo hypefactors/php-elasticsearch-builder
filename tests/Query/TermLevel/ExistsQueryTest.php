@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace Hypefactors\ElasticBuilder\Tests\Query\TermLevel;
 
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQuery\FilterQueryInterface;
+use Hypefactors\ElasticBuilder\Query\Compound\BoolQueryInterface;
 use Hypefactors\ElasticBuilder\Query\TermLevel\ExistsQuery;
+use Hypefactors\ElasticBuilder\QueryBuilder;
+use Hypefactors\ElasticBuilder\RequestBuilder;
+use Hypefactors\ElasticBuilder\Tests\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 
 class ExistsQueryTest extends TestCase
 {
@@ -15,25 +19,30 @@ class ExistsQueryTest extends TestCase
      */
     public function it_builds_the_query()
     {
-        $query = new ExistsQuery();
-        $query->field('my_field');
+        $existsQuery = new ExistsQuery();
+        $existsQuery->field('name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($existsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($existsQuery) {
+                $query->exists($existsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'exists' => [
-                'field' => 'my_field',
+                'field' => 'name',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "exists": {
-                    "field": "my_field"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($existsQuery->isEmpty());
+        $this->assertSame($expected, $existsQuery->build());
     }
 
     /**
@@ -41,28 +50,32 @@ class ExistsQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_boost_factor_parameter()
     {
-        $query = new ExistsQuery();
-        $query->field('my_field');
-        $query->boost(1.5);
+        $existsQuery = new ExistsQuery();
+        $existsQuery->field('name');
+        $existsQuery->boost(1.5);
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($existsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($existsQuery) {
+                $query->exists($existsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'exists' => [
-                'field' => 'my_field',
+                'field' => 'name',
                 'boost' => 1.5,
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "exists": {
-                    "field": "my_field",
-                    "boost": 1.5
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($existsQuery->isEmpty());
+        $this->assertSame($expected, $existsQuery->build());
     }
 
     /**
@@ -70,28 +83,32 @@ class ExistsQueryTest extends TestCase
      */
     public function it_builds_the_query_with_the_name_parameter()
     {
-        $query = new ExistsQuery();
-        $query->field('my_field');
-        $query->name('my-query-name');
+        $existsQuery = new ExistsQuery();
+        $existsQuery->field('name');
+        $existsQuery->name('my-query-name');
 
-        $expectedArray = [
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->bool(function (BoolQueryInterface $query) use ($existsQuery) {
+            $query->filter(function (FilterQueryInterface $query) use ($existsQuery) {
+                $query->exists($existsQuery);
+            });
+        });
+
+        $requestBuilder = new RequestBuilder();
+        $requestBuilder->query($queryBuilder);
+
+        $response = $this->client->search($requestBuilder->build());
+
+        $expected = [
             'exists' => [
-                'field' => 'my_field',
+                'field' => 'name',
                 '_name' => 'my-query-name',
             ],
         ];
 
-        $expectedJson = <<<'JSON'
-            {
-                "exists": {
-                    "field": "my_field",
-                    "_name": "my-query-name"
-                }
-            }
-            JSON;
-
-        $this->assertSame($expectedArray, $query->toArray());
-        $this->assertSame($expectedJson, $query->toJson(JSON_PRETTY_PRINT));
+        $this->assertArrayHasKey('took', $response);
+        $this->assertFalse($existsQuery->isEmpty());
+        $this->assertSame($expected, $existsQuery->build());
     }
 
     /**
@@ -102,8 +119,8 @@ class ExistsQueryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The "field" is required!');
 
-        $query = new ExistsQuery();
+        $existsQuery = new ExistsQuery();
 
-        $query->toArray();
+        $existsQuery->build();
     }
 }
